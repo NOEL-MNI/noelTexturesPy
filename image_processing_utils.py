@@ -9,6 +9,8 @@ import multiprocessing
 import zipfile
 import img2pdf
 from PIL import Image
+from skimage.filters import threshold_otsu, threshold_sauvola
+
 from utils import *
 
 import logging
@@ -37,14 +39,31 @@ os.environ[ "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS" ] = str(multiprocessing.cpu_c
 os.environ[ "ANTS_RANDOM_SEED" ] = "666"
 
 
+def _find_logger_basefilename(self, logger):
+    """Finds the logger base filename(s) currently there is only one
+    """
+    log_file = None
+    parent = logger.__dict__['parent']
+    if parent.__class__.__name__ == 'RootLogger':
+        # this is where the file name lives
+        for h in logger.__dict__['handlers']:
+            if h.__class__.__name__ == 'TimedRotatingFileHandler':
+                log_file = h.baseFilename
+    else:
+        log_file = self._find_logger_basefilename(parent)
+
+    return log_file
+
+
 class noelTexturesPy:
-    def __init__(self, id, t1=None, t2=None, output_dir=None, template=None):
+    def __init__(self, id, t1=None, t2=None, output_dir=None, template=None, usen3=False):
         super(noelTexturesPy, self).__init__()
         self._id            = id
         self._t1file        = t1
         self._t2file        = t2
         self._outputdir     = output_dir
         self._template      = template
+        self._usen3         = usen3
 
     def __load_nifti_file(self):
     	# load nifti data to memory
@@ -94,64 +113,84 @@ class noelTexturesPy:
             self._icbm152 = ants.image_read( self._mni )
 
 
-    def __bias_correction(self):
-        logger.info("performing N4 bias correction")
-        print("performing N4 bias correction")
-        if self._t1file != None and self._t2file != None:
-            self._t1_n4 = ants.iMath(self._t1.abp_n4(usen3 = False), "Normalize") * 100
-            self._t2_n4 = ants.iMath(self._t2.abp_n4(usen3 = False), "Normalize") * 100
-
-        if self._t1file != None and self._t2file == None:
-            self._t1_n4 = ants.iMath(self._t1.abp_n4(usen3 = False), "Normalize") * 100
-
-        if self._t2file != None and self._t1file == None:
-            self._t2_n4 = ants.iMath(self._t2.abp_n4(usen3 = False), "Normalize") * 100
-
-
     def __register_to_MNI_space(self):
         logger.info("registration to MNI template space")
         print("registration to MNI template space")
         if self._t1file != None and self._t2file != None:
-            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1_n4, type_of_transform = 'Affine' )
-            self._t2_reg = ants.apply_transforms(fixed = self._icbm152, moving = self._t2_n4, transformlist = self._t1_reg['fwdtransforms'])
+            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
+            self._t2_reg = ants.apply_transforms(fixed = self._icbm152, moving = self._t2, transformlist = self._t1_reg['fwdtransforms'])
             ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
             ants.image_write( self._t2_reg, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
-            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1_n4, type_of_transform = 'Affine' )
+            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
             ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
 
         if self._t2file != None and self._t1file == None:
-            self._t2_reg = ants.registration( fixed = self._icbm152, moving = self._t2_n4, type_of_transform = 'Affine' )
+            self._t2_reg = ants.registration( fixed = self._icbm152, moving = self._t2, type_of_transform = 'Affine' )
             ants.image_write( self._t2_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
+
+
+    def __scale(X, *args):
+        x_min = np.percentile(X.numpy(), lower_q)
+        x_max = np.percentile(X.numpy(), upper_q)
+        Y = 100*( X.numpy() - X.numpy().min(axis=0) ) / (x_max-x_min)
+        return X.new_image_like(Y)
+
+
+    def __bias_correction(self):
+        logger.info("performing N4 bias correction")
+        print("performing N4 bias correction")
+        if self._t1file != None and self._t2file != None:
+            # self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation=(0.01, 0.99, 1024), usen3 = self._usen3), "Normalize") * 100
+            # self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(intensity_truncation=(0.01, 0.99, 1024), usen3 = self._usen3), "Normalize") * 100
+            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(usen3 = self._usen3), "Normalize") * 100
+
+        if self._t1file != None and self._t2file == None:
+            # self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation=(0.01, 0.99, 1024), usen3 = self._usen3), "Normalize") * 100
+            # self._t1_n4 = ants.n4_bias_field_correction(self._t1_reg['warpedmovout'], shrink_factor=4, convergence={'iters': [100,100,100,100], 'tol': 1e-07})
+            # self._t1_n4 = self._t1_n4.iMath_truncate_intensity(0.025, 0.975, n_bins=256).iMath_normalize() * 100
+            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            # min, max = self._t1_n4.numpy().min(), self._t1_n4.numpy().max()
+            # tmp = 100 * ( self._t1_n4.numpy() - min ) / max - min
+            # self._t1_n4 = self._t1_reg['warpedmovout'].new_image_like(tmp)
+            # self._t1_n4 = self.__scale(self._t1_n4, 0.01, 99.99)
+
+        if self._t2file != None and self._t1file == None:
+            self._t2_n4 = ants.iMath(self._t2_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
 
 
     def __skull_stripping(self):
         logger.info("performing brain extraction")
         print("performing brain extraction")
         if self._t1file != None and self._t2file != None:
-            self._mask = ants.get_mask( self._t2_reg, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
+            self._mask = ants.get_mask( self._t2_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
 
         if self._t1file != None and self._t2file == None:
-            self._mask = ants.get_mask( self._t1_reg['warpedmovout'], cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3)
+            low_thresh = threshold_otsu(self._t1_n4.numpy())
+            self._mask = ants.get_mask( self._t1_n4, low_thresh=low_thresh).iMath_fill_holes(6)
+            # self._mask = ants.image_read('./templates/mcd_134_1_ANTsBrainExtractionMask.nii.gz')
+            # self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3)
 
         if self._t2file != None and self._t1file == None:
-            self._mask = ants.get_mask( self._t2_reg['warpedmovout'], cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(3)
+            self._mask = ants.get_mask( self._t2_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
 
 
     def __segmentation(self):
         logger.info("computing GM, WM, CSF segmentation")
         print("computing GM, WM, CSF segmentation")
         if self._t1file != None and self._t2file != None:
-            segm = ants.atropos( a = self._t2_reg, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
+            segm = ants.atropos( a = self._t2_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
             self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
 
         if self._t1file != None and self._t2file == None:
-            segm = ants.atropos( a = self._t1_reg['warpedmovout'], m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
+            segm = ants.atropos( a = self._t1_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
             self._segm = segm['segmentation']
+            # self._segm = ants.image_read('./templates/mcd_134_1_ANTsBrainExtractionSegmentation.nii.gz')
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
             # ants.image_write( self._segm, os.path.join(self._outputdir, self._id+'_segmentation.nii.gz'))
@@ -168,13 +207,13 @@ class noelTexturesPy:
         logger.info("computing gradient magnitude")
         print("computing gradient magnitude")
         if self._t1file != None and self._t2file != None:
-            self._grad_t1 = ants.iMath(self._t1_reg['warpedmovout'], "Grad", 1)
+            self._grad_t1 = ants.iMath(self._t1_n4, "Grad", 1)
             # self._grad_t2 = ants.iMath(self._t2_n4, "Grad", 1)
             ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii.gz'))
             # ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t2_gradient_magnitude.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
-            self._grad_t1 = ants.iMath(self._t1_reg['warpedmovout'], "Grad", 1)
+            self._grad_t1 = ants.iMath(self._t1_n4, "Grad", 1)
             ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii.gz'))
 
         # if self._t2file != None and self._t1file == None:
@@ -186,11 +225,11 @@ class noelTexturesPy:
         logger.info('computing relative intensity')
         print('computing relative intensity')
         if self._t1file != None and self._t2file != None:
-            t1_n4_gm = self._t1_reg['warpedmovout'] * self._t1_reg['warpedmovout'].new_image_like(self._gm)
-            t1_n4_wm = self._t1_reg['warpedmovout'] * self._t1_reg['warpedmovout'].new_image_like(self._wm)
+            t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
+            t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
             bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
-            t1_ri = compute_RI(self._t1_reg['warpedmovout'].numpy(), bg_t1, self._mask.numpy())
-            tmp = self._t1_reg['warpedmovout'].new_image_like(t1_ri)
+            t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
+            tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
             ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
 
@@ -203,11 +242,11 @@ class noelTexturesPy:
             # ants.image_write( tmp, os.path.join(self._outputdir, self._id+'_t2_relative_intensity.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
-            t1_n4_gm = self._t1_reg['warpedmovout'] * self._t1_reg['warpedmovout'].new_image_like(self._gm)
-            t1_n4_wm = self._t1_reg['warpedmovout'] * self._t1_reg['warpedmovout'].new_image_like(self._wm)
+            t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
+            t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
             bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
-            t1_ri = compute_RI(self._t1_reg['warpedmovout'].numpy(), bg_t1, self._mask.numpy())
-            tmp = self._t1_reg['warpedmovout'].new_image_like(t1_ri)
+            t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
+            tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
             ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
 
@@ -221,53 +260,61 @@ class noelTexturesPy:
         #     ants.image_write( tmp, os.path.join(self._outputdir, self._id+'_t2_relative_intensity.nii.gz'))
 
     def __generate_QC_maps(self):
-        logger.info('generating QC maps')
+        logger.info('generating QC report')
         if not os.path.exists('./qc'):
             os.makedirs('./qc')
         if self._t1file != None and self._t2file != None:
-            ants.plot(self._t1, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/000_t1_before_bias_correction.png', dpi=450)
-            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/001_t1_after_bias_correction.png', dpi=450)
-            ants.plot(self._t2, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/002_t2_before_bias_correction.png', dpi=450)
-            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/003_t2_after_bias_correction.png', dpi=450)
+            self._icbm152.plot(overlay=self._t1, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/000_t1_before_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/001_t1_after_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t2, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/002_t2_before_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t2_reg, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/003_t2_after_registration.png', dpi=450)
 
-            self._icbm152.plot(overlay=self._t1_n4, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/004_t1_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/005_t1_after_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_n4, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/006_t2_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_reg, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/007_t2_after_registration.png', dpi=450)
+            ants.plot(self._t1_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/004_t1_before_bias_correction.png', dpi=450)
+            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/005_t1_after_bias_correction.png', dpi=450)
+            ants.plot(self._t2_reg, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/006_t2_before_bias_correction.png', dpi=450)
+            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/007_t2_after_bias_correction.png', dpi=450)
 
-            self._t1_reg['warpedmovout'].plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/008_brain_masking.png', dpi=450)
-            self._t1_reg['warpedmovout'].plot(overlay=self._segm, overlay_cmap='RdBu', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/009_segmentation.png', dpi=450)
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/008_brain_masking.png', dpi=450)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/009_segmentation.png', dpi=450)
 
-            ants.plot(self._ri, axis=2, ncol=8, nslices=32, overlay_cmap='nipy_spectral', title='Relative Intensity', filename='./qc/010_relative_intensity.png', dpi=450)
-            ants.plot(self._grad_t1, axis=2, ncol=8, nslices=32, overlay_cmap='hot', title='Gradient Magnitude', filename='./qc/011_gradient_map.png', dpi=450)
+            # tmp = ants.iMath(self._ri.threshold_image(80,100), "Normalize") * 100
+            ants.plot(self._ri, axis=2, ncol=8, nslices=32, cmap='nipy_spectral', title='Relative Intensity', filename='./qc/010_relative_intensity.png', dpi=450)
+            ants.plot(self._grad_t1, axis=2, ncol=8, nslices=32, cmap='hot', title='Gradient Magnitude', filename='./qc/011_gradient_map.png', dpi=450)
 
         if self._t1file != None and self._t2file == None:
-            ants.plot(self._t1, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/000_t1_before_bias_correction.png', dpi=450)
-            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/001_t1_after_bias_correction.png', dpi=450)
-            self._icbm152.plot(overlay=self._t1_n4, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/002_t1_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/003_t1_after_registration.png', dpi=450)
-            self._t1_reg['warpedmovout'].plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/004_brain_masking.png', dpi=450)
-            self._t1_reg['warpedmovout'].plot(overlay=self._segm, overlay_cmap='RdBu', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/005_segmentation.png', dpi=450)
+            self._icbm152.plot(overlay=self._t1, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/000_t1_before_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/001_t1_after_registration.png', dpi=450)
+
+            ants.plot(self._t1_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/002_t1_before_bias_correction.png', dpi=450)
+            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/003_t1_after_bias_correction.png', dpi=450)
+
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/004_brain_masking.png', dpi=450)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/005_segmentation.png', dpi=450)
+
+            # tmp = ants.iMath(self._ri.threshold_image(80,100), "Normalize") * 100
             ants.plot(self._ri, axis=2, ncol=8, nslices=32, cmap='nipy_spectral', title='Relative Intensity', filename='./qc/006_relative_intensity.png', dpi=450)
             ants.plot(self._grad_t1, axis=2, ncol=8, nslices=32, cmap='hot', title='Gradient Magnitude', filename='./qc/007_gradient_map.png', dpi=450)
+
         if self._t2file != None and self._t1file == None:
-            ants.plot(self._t2, axis=2, ncol=8, nslices=32, title='T2w - Before Bias Correction', filename='./qc/000_t2_before_bias_correction.png', dpi=450)
-            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, title='T2w - After Bias Correction', filename='./qc/001_t2_after_bias_correction.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_n4, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/002_t2_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/003_t2_after_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t2, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/000_t2_before_registration.png', dpi=450)
+            self._icbm152.plot(overlay=self._t2_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/001_t2_after_registration.png', dpi=450)
+
+            ants.plot(self._t2_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/002_t2_before_bias_correction.png', dpi=450)
+            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/003_t2_after_bias_correction.png', dpi=450)
 
         # with open(os.path.join(self._outputdir, "QC.pdf"), "wb") as f:
         #     f.write(img2pdf.convert([Image.open(os.path.join('./qc', i)) for i in os.listdir('./qc') if i.endswith(".png")]))
-
-        with PdfPages(os.path.join(self._outputdir, self._id+"_QC.pdf")) as pdf:
-            for i in sorted(os.listdir('./qc')):
-                if i.endswith(".png"):
-                    plt.figure()
-                    img = Image.open(os.path.join('./qc', i))
-                    plt.imshow(img)
-                    plt.axis('off')
-                    pdf.savefig(dpi=450)
-                    plt.close()
+        if self._t1file != None or self._t2file != None:
+            with PdfPages(os.path.join(self._outputdir, self._id+"_QC_report.pdf")) as pdf:
+                for i in sorted(os.listdir('./qc')):
+                    if i.endswith(".png"):
+                        plt.figure()
+                        img = Image.open(os.path.join('./qc', i))
+                        plt.imshow(img)
+                        plt.axis('off')
+                        pdf.savefig(dpi=450)
+                        plt.close()
+                        os.remove(os.path.join('./qc', i))
 
 
     def __create_zip_archive(self):
@@ -283,8 +330,8 @@ class noelTexturesPy:
     def file_processor(self):
         start = time.time()
         self.__load_nifti_file()
-        self.__bias_correction()
         self.__register_to_MNI_space()
+        self.__bias_correction()
         self.__skull_stripping()
         self.__segmentation()
         self.__gradient_magnitude()
@@ -294,3 +341,4 @@ class noelTexturesPy:
         end = time.time()
         print("pipeline processing time elapsed: {} seconds".format(np.round(end-start, 1)))
         logger.info("pipeline processing time elapsed: {} seconds".format(np.round(end-start, 1)))
+        logger.info("*********************************************")

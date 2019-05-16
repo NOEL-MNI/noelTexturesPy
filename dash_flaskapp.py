@@ -100,6 +100,7 @@ body = dbc.Container(
                                     "borderRadius": "5px",
                                     "textAlign": "center",
                                     "margin": "10px",
+                                    "margin-top": "10px",
                                     }
                                 ),
                         dcc.Interval(id='interval1', interval=1.000 * 1000, n_intervals=0),
@@ -130,6 +131,7 @@ body = dbc.Container(
 
 app.layout = html.Div([jumbotron, body])
 app.config['suppress_callback_exceptions']=True
+app.css.append_css({'external_url': "https://use.fontawesome.com/releases/v5.8.2/css/all.css"})
 # app.layout = html.Div(
 #     [
 #         html.H1("noelTexturesPy"),
@@ -195,7 +197,7 @@ def list_files(output_dir=output_dir):
         for name in filenames:
             if name.endswith(('nii.gz','nii','pdf')):
                 f.extend(filenames)
-    return set(f)
+    return sorted(set(f))
 
 
 def random_case_id():
@@ -255,18 +257,25 @@ def update_output(uploaded_filenames, uploaded_file_contents, case_id, output_di
         case_id = random_case_id()
         logger.info("assigning randomly generated case ID")
         logger.info("case ID: {}".format(case_id))
-    noelTexturesPy(id=str(case_id), t1=t1, t2=t2, output_dir=output_dir, template=template).file_processor()
+    noelTexturesPy(id=str(case_id), t1=t1, t2=t2, output_dir=output_dir, template=template, usen3=False).file_processor()
 
     try:
         for f in glob.glob(os.path.join(uploads_dir, '*')):
             os.remove(f)
-        os.remove('./logs.log')
+        # os.remove('./logs.log')
     except OSError as e:
         print("Warning: %s - %s." % (e.filename, e.strerror))
 
     outputs = list_files(output_dir=output_dir)
 
-    return [html.Ul(file_download_link(filename)) for filename in outputs]
+    return [html.Ul(
+                    html.I(
+                            file_download_link(filename),
+                            className='fas fa-arrow-alt-circle-down fa-sm fa-fw'),
+                            className='fa-ul',
+                            style={"margin": "-20px", "textAlign": "left", "padding-left": "10px", "padding-right": "10px"}
+                            )
+            for filename in outputs]
 
 
 @app.callback(Output('div-out', 'children'),
@@ -286,10 +295,10 @@ def update_output(n):
     file = open('./logs.log', 'r')
     data=''
     lines = file.readlines()
-    if lines.__len__()<=10:
+    if lines.__len__()<=12:
         last_lines=lines
     else:
-        last_lines = lines[-10:]
+        last_lines = lines[-12:]
     for line in last_lines:
         data=data+line + '<BR>'
     file.close()
