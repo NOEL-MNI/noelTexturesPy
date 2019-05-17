@@ -291,14 +291,14 @@ def update_output(n):
     file = open(log_filename, 'r')
     data=''
     lines = file.readlines()
-    if lines.__len__()<=12:
+    if lines.__len__()<=14:
         last_lines=lines
     else:
-        last_lines = lines[-12:]
+        last_lines = lines[-14:]
     for line in last_lines:
         data=data+line + '<BR>'
     file.close()
     return data
 
 if __name__ == "__main__":
-    app.run_server(host='0.0.0.0', debug=True, port=9999)
+    app.run_server(host='0.0.0.0', debug=False, port=9999)
