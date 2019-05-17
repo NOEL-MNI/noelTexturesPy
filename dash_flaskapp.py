@@ -1,6 +1,5 @@
 import base64
 import os, sys, glob, shutil
-import random, string
 import numpy as np
 from urllib.parse import quote as urlquote
 
@@ -12,6 +11,10 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 from image_processing_utils import noelTexturesPy, logger
+from utils import find_logger_basefilename, random_case_id
+
+log_filename = find_logger_basefilename(logger)
+logger.info("log filename: {}".format(str(log_filename)))
 
 template = os.path.join('./templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 output_dir = os.path.join('./outputs')
@@ -200,13 +203,6 @@ def list_files(output_dir=output_dir):
     return sorted(set(f))
 
 
-def random_case_id():
-    letters = ''.join(random.choices(string.ascii_letters, k=16))
-    digits  = ''.join(random.choices(string.digits, k=16))
-    x = letters[:3].lower() + '_' + digits[:4]
-    return x
-
-
 @app.callback(
     Output("case-id-output", "children"),
     [Input("case-id-input", "n_blur")],
@@ -282,7 +278,7 @@ def update_output(uploaded_filenames, uploaded_file_contents, case_id, output_di
     [Input('interval1', 'n_intervals')])
 def update_interval(n):
     orig_stdout = sys.stdout
-    f = open('./logs.log', 'a')
+    f = open(log_filename, 'a')
     sys.stdout = f
     # print('Intervals Passed: {}'.format(str(n)))
     sys.stdout = orig_stdout
@@ -292,7 +288,7 @@ def update_interval(n):
 @app.callback(Output('console-out', 'srcDoc'),
     [Input('interval2', 'n_intervals')])
 def update_output(n):
-    file = open('./logs.log', 'r')
+    file = open(log_filename, 'r')
     data=''
     lines = file.readlines()
     if lines.__len__()<=12:

@@ -1,4 +1,4 @@
-import os, sys, time
+import os, sys, time, logging
 import matplotlib as mpl
 mpl.use("Qt5Agg")
 from matplotlib.backends.backend_pdf import PdfPages
@@ -7,18 +7,16 @@ import ants
 import numpy as np
 import multiprocessing
 import zipfile
-import img2pdf
 from PIL import Image
-from skimage.filters import threshold_otsu, threshold_sauvola
-
+from skimage.filters import threshold_otsu
 from utils import *
 
-import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-logfile = './logs.log'
+# logfile = './logs.log'
+logfile = os.path.join('.', str(random_case_id())+'.log')
 # create a file handler
 try:
     os.remove(logfile)
@@ -37,22 +35,6 @@ logger.addHandler(handler)
 
 os.environ[ "ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS" ] = str(multiprocessing.cpu_count())
 os.environ[ "ANTS_RANDOM_SEED" ] = "666"
-
-
-def _find_logger_basefilename(self, logger):
-    """Finds the logger base filename(s) currently there is only one
-    """
-    log_file = None
-    parent = logger.__dict__['parent']
-    if parent.__class__.__name__ == 'RootLogger':
-        # this is where the file name lives
-        for h in logger.__dict__['handlers']:
-            if h.__class__.__name__ == 'TimedRotatingFileHandler':
-                log_file = h.baseFilename
-    else:
-        log_file = self._find_logger_basefilename(parent)
-
-    return log_file
 
 
 class noelTexturesPy:
@@ -302,8 +284,7 @@ class noelTexturesPy:
             ants.plot(self._t2_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/002_t2_before_bias_correction.png', dpi=450)
             ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/003_t2_after_bias_correction.png', dpi=450)
 
-        # with open(os.path.join(self._outputdir, "QC.pdf"), "wb") as f:
-        #     f.write(img2pdf.convert([Image.open(os.path.join('./qc', i)) for i in os.listdir('./qc') if i.endswith(".png")]))
+
         if self._t1file != None or self._t2file != None:
             with PdfPages(os.path.join(self._outputdir, self._id+"_QC_report.pdf")) as pdf:
                 for i in sorted(os.listdir('./qc')):
