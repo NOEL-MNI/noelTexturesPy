@@ -15,3 +15,7 @@ docker run --rm -p 9999:9999 neuressence/pynoel-gui-app:beta
 ```
 
 Access the GUI at http://localhost:9999
+
+
+<hr>
+![demo-noelTexturesPy](https://github.com/NOEL-MNI/noelTexturesPy/blob/master/demo-noelTexturesPy.png)
