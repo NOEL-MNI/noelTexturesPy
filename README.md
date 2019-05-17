@@ -1,11 +1,11 @@
 # noelTexturesPy
 Dash app to generate textures maps from MRI using Advanced Normalization Tools (ANTsPy)
-
+<hr>
 
 ## Prerequisites
 Make sure you've docker installed.<br>
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki
-<hr>
+
 
 ## How to run?
 ```bash
