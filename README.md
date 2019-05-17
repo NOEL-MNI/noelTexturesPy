@@ -1,5 +1,5 @@
 # noelTexturesPy
-Dash app to generate textures maps from MRI using Advanced Normalization Tools (ANTsPy)
+Dash app to generate textures maps from MRI using Advanced Normalization Tools ([ANTsPy](https://antspy.readthedocs.io/en/latest/))
 <hr>
 
 ## Prerequisites
