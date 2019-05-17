@@ -18,4 +18,4 @@ Access the GUI at http://localhost:9999
 
 
 <hr>
-![demo-noelTexturesPy](https://github.com/NOEL-MNI/noelTexturesPy/blob/master/demo-noelTexturesPy.png)
+![demo-noelTexturesPy](demo-noelTexturesPy.png?raw=true)
