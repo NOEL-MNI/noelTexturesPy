@@ -7,7 +7,7 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
-![Usage asciicast GIF](images/textures.gif)
+![Usage noelTexturesPy GIF](images/textures.gif)
 
 
 
