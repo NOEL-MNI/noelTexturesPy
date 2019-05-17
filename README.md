@@ -8,7 +8,7 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
 
-## How to run?
+## Run the app
 ```bash
 docker pull neuressence/pynoel-gui-app:latest
 docker run --rm -p 9999:9999 neuressence/pynoel-gui-app:latest
