@@ -53,9 +53,9 @@ jumbotron = dbc.Jumbotron(
                 html.H1("noelTexturesPy", className="display-3"),
                 html.H2("texture maps pipeline"),
                 html.P(
-                    "generate texture maps from T1-weighted AND/OR T2-weighted MRI",
+                    "generate texture maps from T1-weighted MRI",
                     className="lead",
-                ),
+                )
             ],
             fluid=False,
             style={"height": "20%"}

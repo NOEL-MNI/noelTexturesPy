@@ -1,4 +1,4 @@
-FROM neuressence/pynoel-gui-fast:dash
+FROM neuressence/pynoel-gui-fast:latest
 MAINTAINER ravnoorgill <ravnoor@gmail.com>
 
 WORKDIR /noelpy
