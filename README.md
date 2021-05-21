@@ -19,6 +19,12 @@ docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
 
 Access the GUI at http://localhost:9999
 
+## Required inputs
+Please ensure the file(s) are renamed accordingly before uploading it to `noelTexturesPy`.
+```
+- T1-weighted image must include the string “t1” or “T1” in its filename, and/or
+- T2-weighted (or FLAIR) image must include either “t2”, “T2”, “flair”, or “FLAIR”
+```
 
 <hr>
 
