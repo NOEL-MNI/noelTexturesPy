@@ -1,5 +1,5 @@
-FROM neuressence/pynoel-gui-fast:latest
-MAINTAINER ravnoorgill <ravnoor@gmail.com>
+FROM noelmni/pynoel-gui-fast:latest
+LABEL maintainer=<ravnoor@gmail.com>
 
 WORKDIR /noelpy
 
