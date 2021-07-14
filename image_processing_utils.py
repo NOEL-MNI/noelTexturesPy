@@ -154,10 +154,10 @@ class noelTexturesPy:
             self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
 
         if self._t1file != None and self._t2file == None:
-            low_thresh = threshold_otsu(self._t1_n4.numpy())
-            self._mask = ants.get_mask( self._t1_n4, low_thresh=low_thresh, cleanup = 5).iMath_fill_holes(6)
+            # low_thresh = threshold_otsu(self._t1_n4.numpy())
+            # self._mask = ants.get_mask( self._t1_n4, low_thresh=low_thresh, cleanup = 5).iMath_fill_holes(6)
             # self._mask = ants.image_read('./templates/mcd_134_1_ANTsBrainExtractionMask.nii.gz')
-            # self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3)
+            self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
 
         if self._t2file != None and self._t1file == None:
             self._mask = ants.get_mask( self._t2_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
