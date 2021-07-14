@@ -101,16 +101,16 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file != None:
             self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
             self._t2_reg = ants.apply_transforms(fixed = self._icbm152, moving = self._t2, transformlist = self._t1_reg['fwdtransforms'])
-            ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
-            ants.image_write( self._t2_reg, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
+            # ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
+            # ants.image_write( self._t2_reg, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
             self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
-            ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
+            # ants.image_write( self._t1_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
 
         if self._t2file != None and self._t1file == None:
             self._t2_reg = ants.registration( fixed = self._icbm152, moving = self._t2, type_of_transform = 'Affine' )
-            ants.image_write( self._t2_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
+            # ants.image_write( self._t2_reg['warpedmovout'], os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
 
     def __scale(X, *args):
@@ -128,12 +128,15 @@ class noelTexturesPy:
             # self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(intensity_truncation=(0.01, 0.99, 1024), usen3 = self._usen3), "Normalize") * 100
             self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
             self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(usen3 = self._usen3), "Normalize") * 100
+            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
+            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
             # self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation=(0.01, 0.99, 1024), usen3 = self._usen3), "Normalize") * 100
             # self._t1_n4 = ants.n4_bias_field_correction(self._t1_reg['warpedmovout'], shrink_factor=4, convergence={'iters': [100,100,100,100], 'tol': 1e-07})
             # self._t1_n4 = self._t1_n4.iMath_truncate_intensity(0.025, 0.975, n_bins=256).iMath_normalize() * 100
             self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
             # min, max = self._t1_n4.numpy().min(), self._t1_n4.numpy().max()
             # tmp = 100 * ( self._t1_n4.numpy() - min ) / max - min
             # self._t1_n4 = self._t1_reg['warpedmovout'].new_image_like(tmp)
@@ -141,6 +144,7 @@ class noelTexturesPy:
 
         if self._t2file != None and self._t1file == None:
             self._t2_n4 = ants.iMath(self._t2_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
 
     def __skull_stripping(self):
