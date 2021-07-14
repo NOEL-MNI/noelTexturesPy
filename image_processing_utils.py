@@ -147,7 +147,7 @@ class noelTexturesPy:
         logger.info("performing brain extraction")
         print("performing brain extraction")
         if self._t1file != None and self._t2file != None:
-            self._mask = ants.get_mask( self._t2_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
+            self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
 
         if self._t1file != None and self._t2file == None:
             low_thresh = threshold_otsu(self._t1_n4.numpy())
@@ -163,11 +163,10 @@ class noelTexturesPy:
         logger.info("computing GM, WM, CSF segmentation")
         print("computing GM, WM, CSF segmentation")
         if self._t1file != None and self._t2file != None:
-            segm = ants.atropos( a = self._t2_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
+            segm = ants.atropos( a = self._t1_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
             self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
-
 
         if self._t1file != None and self._t2file == None:
             segm = ants.atropos( a = self._t1_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
