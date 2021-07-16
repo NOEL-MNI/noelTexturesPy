@@ -1,14 +1,13 @@
 import os, sys, time, logging
-import matplotlib as mpl
-mpl.use("Qt5Agg")
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import ants
+from antspynet.utilities import brain_extraction, deep_atropos
 import numpy as np
 import multiprocessing
 import zipfile
 from PIL import Image
-from skimage.filters import threshold_otsu
+# from skimage.filters import threshold_otsu
 from utils import *
 
 
@@ -151,41 +150,27 @@ class noelTexturesPy:
         logger.info("performing brain extraction")
         print("performing brain extraction")
         if self._t1file != None and self._t2file != None:
-            self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
+            self._mask = self.__brain_extraction( self._t1_n4, modality="t1", p=0.5)
 
         if self._t1file != None and self._t2file == None:
-            # low_thresh = threshold_otsu(self._t1_n4.numpy())
-            # self._mask = ants.get_mask( self._t1_n4, low_thresh=low_thresh, cleanup = 5).iMath_fill_holes(6)
-            # self._mask = ants.image_read('./templates/mcd_134_1_ANTsBrainExtractionMask.nii.gz')
-            self._mask = ants.get_mask( self._t1_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
+            self._mask = self.__brain_extraction( self._t1_n4, modality="t1", p=0.5)
 
         if self._t2file != None and self._t1file == None:
-            self._mask = ants.get_mask( self._t2_n4, cleanup = 5 ).threshold_image( 1, 2 ).iMath_fill_holes(3).iMath_fill_holes(6)
+            self._mask = self.__brain_extraction( self._t2_n4, modality="t2", p=0.5)
 
 
     def __segmentation(self):
         logger.info("computing GM, WM, CSF segmentation")
         print("computing GM, WM, CSF segmentation")
         if self._t1file != None and self._t2file != None:
-            segm = ants.atropos( a = (self._t1_n4, self._t2_n4), m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
-            self._segm = segm['segmentation']
+            self._segm = self.__segmentation(self.t1_n4)
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
         if self._t1file != None and self._t2file == None:
-            segm = ants.atropos( a = self._t1_n4, m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
-            self._segm = segm['segmentation']
-            # self._segm = ants.image_read('./templates/mcd_134_1_ANTsBrainExtractionSegmentation.nii.gz')
+            self._segm = self.__segmentation(self.t1_n4)
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
-            # ants.image_write( self._segm, os.path.join(self._outputdir, self._id+'_segmentation.nii.gz'))
-
-        # if self._t2file != None and self._t1file == None:
-        #     segm = ants.atropos( a = self._t2_reg['warpedmovout'], m = '[0.2,1x1x1]', c = '[2,0]',  i = 'kmeans[3]', x = self._mask )
-        #     self._segm = segm['segmentation']
-        #     self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
-        #     self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
-            # ants.image_write( self._segm, os.path.join(self._outputdir, self._id+'_segmentation.nii.gz'))
 
 
     def __gradient_magnitude(self):
@@ -301,6 +286,20 @@ class noelTexturesPy:
                         os.remove(os.path.join('./qc', i))
 
 
+    def __brain_extraction(image, modality, p:float):
+        # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
+        prob = brain_extraction(image, modality=modality)
+        # mask can be obtained as:
+        mask = ants.threshold_image(prob, low_thresh=0, high_thresh=p, inval=1, outval=0, binary=True)
+        return mask
+
+
+    def __segmentation(image):
+        # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
+        segm = deep_atropos(image, do_preprocessing=False, use_spatial_priors=0, verbose=False)
+        return segm['segmentation']
+
+
     def __create_zip_archive(self):
         print('creating a zip archive')
         logger.info('creating a zip archive')
@@ -310,6 +309,7 @@ class noelTexturesPy:
                 if file.endswith('.nii.gz'):
                     zip_archive.write(os.path.join(folder, file), file, compress_type = zipfile.ZIP_DEFLATED)
         zip_archive.close()
+
 
     def file_processor(self):
         start = time.time()

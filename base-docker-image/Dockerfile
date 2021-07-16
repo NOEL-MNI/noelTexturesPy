@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN python -m pip install --upgrade pip
 
-RUN pip install antspyx numpy scipy pandas matplotlib==3.1.2 scikit-learn scikit-image statsmodels img2pdf pillow \
+RUN pip install antspynet numpy scipy pandas matplotlib==3.1.2 scikit-learn scikit-image statsmodels img2pdf pillow \
 		dash dash_bootstrap_components dash_html_components flask \
 		chart_studio nibabel pyyaml sklearn webcolors
 
