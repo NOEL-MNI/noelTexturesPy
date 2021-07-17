@@ -196,44 +196,12 @@ class noelTexturesPy:
         if not os.path.exists('./qc'):
             os.makedirs('./qc')
         if self._t1file != None and self._t2file != None:
-            self._icbm152.plot(overlay=self._t1, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/000_t1_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/001_t1_after_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/002_t2_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_reg, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/003_t2_after_registration.png', dpi=450)
-
-            ants.plot(self._t1_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/004_t1_before_bias_correction.png', dpi=450)
-            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/005_t1_after_bias_correction.png', dpi=450)
-            ants.plot(self._t2_reg, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/006_t2_before_bias_correction.png', dpi=450)
-            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/007_t2_after_bias_correction.png', dpi=450)
-
-            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/008_brain_masking.png', dpi=450)
-            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/009_segmentation.png', dpi=450)
-
-            # tmp = ants.iMath(self._ri.threshold_image(80,100), "Normalize") * 100
-            ants.plot(self._ri, axis=2, ncol=8, nslices=32, cmap='nipy_spectral', title='Relative Intensity', filename='./qc/010_relative_intensity.png', dpi=450)
-            ants.plot(self._grad_t1, axis=2, ncol=8, nslices=32, cmap='hot', title='Gradient Magnitude', filename='./qc/011_gradient_map.png', dpi=450)
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=450)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=450)
 
         if self._t1file != None and self._t2file == None:
-            self._icbm152.plot(overlay=self._t1, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - Before Registration', filename='./qc/000_t1_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t1_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T1w - After Registration', filename='./qc/001_t1_after_registration.png', dpi=450)
-
-            ants.plot(self._t1_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - Before Bias Correction', filename='./qc/002_t1_before_bias_correction.png', dpi=450)
-            ants.plot(self._t1_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T1w - After Bias Correction', filename='./qc/003_t1_after_bias_correction.png', dpi=450)
-
-            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/004_brain_masking.png', dpi=450)
-            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/005_segmentation.png', dpi=450)
-
-            # tmp = ants.iMath(self._ri.threshold_image(80,100), "Normalize") * 100
-            ants.plot(self._ri, axis=2, ncol=8, nslices=32, cmap='nipy_spectral', title='Relative Intensity', filename='./qc/006_relative_intensity.png', dpi=450)
-            ants.plot(self._grad_t1, axis=2, ncol=8, nslices=32, cmap='hot', title='Gradient Magnitude', filename='./qc/007_gradient_map.png', dpi=450)
-
-        if self._t2file != None and self._t1file == None:
-            self._icbm152.plot(overlay=self._t2, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - Before Registration', filename='./qc/000_t2_before_registration.png', dpi=450)
-            self._icbm152.plot(overlay=self._t2_reg['warpedmovout'], overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='T2w - After Registration', filename='./qc/001_t2_after_registration.png', dpi=450)
-
-            ants.plot(self._t2_reg['warpedmovout'], axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - Before Bias Correction', filename='./qc/002_t2_before_bias_correction.png', dpi=450)
-            ants.plot(self._t2_n4, axis=2, ncol=8, nslices=32, cmap='jet', title='T2w - After Bias Correction', filename='./qc/003_t2_after_bias_correction.png', dpi=450)
-
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=450)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=450)
 
         if self._t1file != None or self._t2file != None:
             with PdfPages(os.path.join(self._outputdir, self._id+"_QC_report.pdf")) as pdf:
