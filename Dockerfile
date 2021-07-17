@@ -1,15 +1,15 @@
-FROM noelmni/pynoel-gui-fast:dev
+FROM noelmni/pynoel-gui-fast:antspynet
 LABEL maintainer=<ravnoor@gmail.com>
 
 WORKDIR /noelpy
 
 COPY Procfile /noelpy
 COPY templates/* /noelpy/templates/
-COPY utils.py /noelpy
-COPY image_processing_utils.py /noelpy
-COPY dash_flaskapp.py /noelpy
+COPY src/utils.py /noelpy
+COPY src/image_processing.py /noelpy
+COPY src/app.py /noelpy
 
 EXPOSE 9999
 
-# ENTRYPOINT [ "gunicorn", "--access-logfile", "-", "--log-file", "./logs.log", "dash_flaskapp:server", "-b", ":9999" ]
-ENTRYPOINT [ "python3", "dash_flaskapp.py" ]
+# ENTRYPOINT [ "gunicorn", "--access-logfile", "-", "--log-file", "./logs.log", "app:server", "-b", ":9999" ]
+ENTRYPOINT [ "python3", "app.py" ]
