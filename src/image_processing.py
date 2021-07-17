@@ -196,12 +196,12 @@ class noelTexturesPy:
         if not os.path.exists('./qc'):
             os.makedirs('./qc')
         if self._t1file != None and self._t2file != None:
-            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=450)
-            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=450)
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=300)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=300)
 
         if self._t1file != None and self._t2file == None:
-            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=450)
-            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=450)
+            self._t1_n4.plot(overlay=self._mask, overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Brain Masking', filename='./qc/001_brain_masking.png', dpi=300)
+            self._t1_n4.plot(overlay=self._segm, overlay_cmap='gist_rainbow', overlay_alpha=0.5, axis=2, ncol=8, nslices=32, title='Segmentation', filename='./qc/002_segmentation.png', dpi=300)
 
         if self._t1file != None or self._t2file != None:
             with PdfPages(os.path.join(self._outputdir, self._id+"_QC_report.pdf")) as pdf:
@@ -211,7 +211,7 @@ class noelTexturesPy:
                         img = Image.open(os.path.join('./qc', i))
                         plt.imshow(img)
                         plt.axis('off')
-                        pdf.savefig(dpi=450)
+                        pdf.savefig(dpi=300)
                         plt.close()
                         os.remove(os.path.join('./qc', i))
 
