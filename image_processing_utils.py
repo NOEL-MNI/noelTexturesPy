@@ -1,4 +1,8 @@
-import os, sys, time, logging
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"
+import sys
+import time
+import logging
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import ants
@@ -136,25 +140,31 @@ class noelTexturesPy:
         logger.info("performing brain extraction")
         print("performing brain extraction")
         if self._t1file != None and self._t2file != None:
-            self._mask = self.__brain_extraction( self._t1_n4, modality="t1", p=0.5)
+            self._modality = "t1"
+            self._mask = self.__brain_extraction()
 
         if self._t1file != None and self._t2file == None:
-            self._mask = self.__brain_extraction( self._t1_n4, modality="t1", p=0.5)
+            self._modality = "t1"
+            self._mask = self.__brain_extraction()
 
         if self._t2file != None and self._t1file == None:
-            self._mask = self.__brain_extraction( self._t2_n4, modality="t2", p=0.5)
+            self._modality = "t2"
+            self._mask = self.__brain_extraction()
 
 
     def __segmentation(self):
         logger.info("computing GM, WM, CSF segmentation")
         print("computing GM, WM, CSF segmentation")
+        # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
         if self._t1file != None and self._t2file != None:
-            self._segm = self.__segmentation(self.t1_n4)
+            segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
+            self._segm = segm['segmentation_image']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
         if self._t1file != None and self._t2file == None:
-            self._segm = self.__segmentation(self.t1_n4)
+            segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
+            self._segm = segm['segmentation_image']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
@@ -257,18 +267,19 @@ class noelTexturesPy:
                         os.remove(os.path.join('./qc', i))
 
 
-    def __brain_extraction(image, modality, p:float):
+    def __brain_extraction(self):
         # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
-        prob = brain_extraction(image, modality=modality)
+        if self._modality == "t1":
+            image = self._t1_n4
+        elif self._modality == "t2":
+            image = self._t2_n4
+        else:
+            sys.exit("invalid contrast specified for brain extraction")
+
+        prob = brain_extraction(image, modality=self._modality)
         # mask can be obtained as:
-        mask = ants.threshold_image(prob, low_thresh=0, high_thresh=p, inval=1, outval=0, binary=True)
+        mask = ants.threshold_image(prob, low_thresh=0.5, high_thresh=1.0, inval=1, outval=0, binary=True)
         return mask
-
-
-    def __segmentation(image):
-        # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
-        segm = deep_atropos(image, do_preprocessing=False, use_spatial_priors=0, verbose=False)
-        return segm['segmentation']
 
 
     def __create_zip_archive(self):
