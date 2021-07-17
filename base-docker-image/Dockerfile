@@ -17,5 +17,7 @@ RUN pip install antspynet numpy scipy pandas matplotlib==3.1.2 scikit-learn scik
 
 RUN rm -rf ~/.cache/pip
 
+RUN sed -i '14d' /usr/local/lib/python3.8/site-packages/antspynet/architectures/create_custom_unet_model.py
+
 ENV TZ=America/Montreal
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
