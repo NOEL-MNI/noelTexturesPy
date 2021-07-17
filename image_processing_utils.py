@@ -167,7 +167,7 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file != None:
             # segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
             # self._segm = segm['segmentation_image']
-            segm = ants.atropos(a=(self._t1_n4, self._t2_n4), i=list_of_priors, m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
+            segm = ants.atropos(a=(self._t1_n4, self._t2_n4), i='Kmeans[3]', m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
             self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
@@ -175,7 +175,7 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file == None:
             # segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
             # self._segm = segm['segmentation_image']
-            segm = ants.atropos(a=self._t1_n4, i=list_of_priors, m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
+            segm = ants.atropos(a=self._t1_n4, i='Kmeans[3]', m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
             self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
