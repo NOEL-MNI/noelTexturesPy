@@ -73,30 +73,6 @@ class noelTexturesPy:
             self._icbm152 = ants.image_read( self._mni )
 
 
-    def __load_dicoms(self):
-    	# load nifti data to memory
-        logger.info("loading dicom files from directory")
-        print("loading dicom files from directory")
-        self._mni = self._template
-
-        if self._t1file == None and self._t2file == None:
-        	logger.warn("Please load the data first.", "The data is missing")
-        	return
-
-        if self._t1file != None and self._t2file != None:
-            self._t1 = ants.dicom_read( self._t1file )
-            self._t2 = ants.dicom_read( self._t2file )
-            self._icbm152 = ants.image_read( self._mni )
-
-        if self._t1file != None and self._t2file == None:
-            self._t1 = ants.dicom_read( self._t1file )
-            self._icbm152 = ants.image_read( self._mni )
-
-        if self._t2file != None and self._t1file == None:
-            self._t2 = ants.dicom_read( self._t2file )
-            self._icbm152 = ants.image_read( self._mni )
-
-
     def __register_to_MNI_space(self):
         logger.info("registration to MNI template space")
         print("registration to MNI template space")
@@ -109,13 +85,6 @@ class noelTexturesPy:
 
         if self._t2file != None and self._t1file == None:
             self._t2_reg = ants.registration( fixed = self._icbm152, moving = self._t2, type_of_transform = 'Affine' )
-
-
-    def __scale(X, *args):
-        x_min = np.percentile(X.numpy(), lower_q)
-        x_max = np.percentile(X.numpy(), upper_q)
-        Y = 100*( X.numpy() - X.numpy().min(axis=0) ) / (x_max-x_min)
-        return X.new_image_like(Y)
 
 
     def __bias_correction(self):
@@ -162,7 +131,7 @@ class noelTexturesPy:
                     "gm" : os.path.join('./templates', 'mni_icbm152_gm_tal_nlin_sym_09a.nii.gz'),
                     "wm" : os.path.join('./templates', 'mni_icbm152_wm_tal_nlin_sym_09a.nii.gz')
                  }
-        list_of_priors = (ants.image_read(priors['csf']), ants.image_read(priors['gm']), ants.image_read(priors['wm']))
+        # list_of_priors = (ants.image_read(priors['csf']), ants.image_read(priors['gm']), ants.image_read(priors['wm']))
         
         if self._t1file != None and self._t2file != None:
             # segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
@@ -292,17 +261,6 @@ class noelTexturesPy:
         # mask can be obtained as:
         mask = ants.threshold_image(prob, low_thresh=0.5, high_thresh=1.0, inval=1, outval=0, binary=True)
         return mask
-
-
-    def __create_zip_archive(self):
-        print('creating a zip archive')
-        logger.info('creating a zip archive')
-        zip_archive = zipfile.ZipFile(os.path.join(self._outputdir, self._id+"_texture_maps_archive.zip"), 'w')
-        for folder, subfolders, files in os.walk(self._outputdir):
-            for file in files:
-                if file.endswith('.nii.gz'):
-                    zip_archive.write(os.path.join(folder, file), file, compress_type = zipfile.ZIP_DEFLATED)
-        zip_archive.close()
 
 
     def file_processor(self):
