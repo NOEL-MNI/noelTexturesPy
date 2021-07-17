@@ -6,7 +6,7 @@ import logging
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import ants
-from antspynet.utilities import brain_extraction, deep_atropos
+from antspynet.utilities import brain_extraction
 import numpy as np
 import multiprocessing
 import zipfile
@@ -156,15 +156,27 @@ class noelTexturesPy:
         logger.info("computing GM, WM, CSF segmentation")
         print("computing GM, WM, CSF segmentation")
         # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
+
+        priors = {
+                    "csf": os.path.join('./templates', 'mni_icbm152_csf_tal_nlin_sym_09a.nii.gz'),
+                    "gm" : os.path.join('./templates', 'mni_icbm152_gm_tal_nlin_sym_09a.nii.gz'),
+                    "wm" : os.path.join('./templates', 'mni_icbm152_wm_tal_nlin_sym_09a.nii.gz')
+                 }
+        list_of_priors = (ants.image_read(priors['csf']), ants.image_read(priors['gm']), ants.image_read(priors['wm']))
+        
         if self._t1file != None and self._t2file != None:
-            segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
-            self._segm = segm['segmentation_image']
+            # segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
+            # self._segm = segm['segmentation_image']
+            segm = ants.atropos(a=(self._t1_n4, self._t2_n4), i=list_of_priors, m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
+            self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
         if self._t1file != None and self._t2file == None:
-            segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
-            self._segm = segm['segmentation_image']
+            # segm = deep_atropos(self._t1_n4 * self._mask, do_preprocessing=False, use_spatial_priors=0, verbose=False)
+            # self._segm = segm['segmentation_image']
+            segm = ants.atropos(a=self._t1_n4, i=list_of_priors, m='[0.2,1x1x1]', c='[3,0]', x=self._mask)
+            self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
