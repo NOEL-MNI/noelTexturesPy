@@ -10,7 +10,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
-from image_processing_utils import noelTexturesPy, logger
+from image_processing import noelTexturesPy, logger
 from utils import find_logger_basefilename, random_case_id
 
 log_filename = find_logger_basefilename(logger)
