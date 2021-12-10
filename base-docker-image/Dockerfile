@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m pip install --upgrade pip
 
 RUN python -m pip install antspynet==0.1.2 numpy scipy pandas matplotlib==3.1.2 scikit-learn scikit-image statsmodels img2pdf pillow \
-		dash dash_bootstrap_components dash_html_components flask \
+		dash dash_bootstrap_components==0.13.1 dash_html_components flask \
 		chart_studio nibabel pyyaml sklearn webcolors
 
 RUN rm -rf ~/.cache/pip
