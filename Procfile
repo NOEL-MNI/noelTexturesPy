@@ -1,1 +1,1 @@
-web: gunicorn dash_flaskapp:server
+web: gunicorn app:server
