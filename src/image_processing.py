@@ -120,6 +120,8 @@ class noelTexturesPy:
             self._modality = "t2"
             self._mask = self.__brain_extraction()
 
+        ants.image_write(self._mask, os.path.join(self._outputdir, self._id+'_brain_mask.nii.gz'))
+
 
     def __segmentation(self):
         logger.info("computing GM, WM, CSF segmentation")
