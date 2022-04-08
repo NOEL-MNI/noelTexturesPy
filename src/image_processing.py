@@ -91,13 +91,13 @@ class noelTexturesPy:
         logger.info("performing N4 bias correction")
         print("performing N4 bias correction")
         if self._t1file != None and self._t2file != None:
-            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation = (0.05, 0.95, 256), usen3 = self._usen3), "Normalize") * 100
             self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(usen3 = self._usen3), "Normalize") * 100
             ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
             ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
 
         if self._t1file != None and self._t2file == None:
-            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
+            self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation = (0.05, 0.95, 256), usen3 = self._usen3), "Normalize") * 100
             ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
 
         if self._t2file != None and self._t1file == None:
