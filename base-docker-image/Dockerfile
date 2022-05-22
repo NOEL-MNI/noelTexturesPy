@@ -1,21 +1,22 @@
-FROM python:3.8-slim-bullseye as builder
+FROM noelmni/antspynet:latest as builder
 
 RUN adduser --quiet --disabled-password noel
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	build-essential libssl-dev \
-    git bash nano wget curl htop \
+		build-essential libssl-dev \
+    	git bash nano wget curl htop img2pdf \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* ~/.cache
 
-RUN python -m pip install antspynet==0.1.2 antspyx==0.2.9 numpy scipy pandas matplotlib==3.1.2 \
-		img2pdf pillow dash dash_bootstrap_components==0.13.1 dash_html_components flask \
+RUN python -m pip install --upgrade pip setuptools wheel
+
+RUN python -m pip install numpy scipy pandas matplotlib pillow \
+		dash dash_bootstrap_components dash_html_components flask \
 		chart_studio nibabel pyyaml webcolors
 
-# remove line 14 from create_custom_unet_model.py to fix keras import issues
-RUN sed -i '14d' /usr/local/lib/python3.8/site-packages/antspynet/architectures/create_custom_unet_model.py
-
 # production image
-FROM python:3.8-slim-bullseye as app
+FROM debian:bullseye-slim
 ENV TZ=America/Montreal
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-COPY --from=builder /usr/local /usr/local
+COPY --from=builder /opt/conda /opt/conda
+ENV PATH=/opt/conda/bin:$PATH
