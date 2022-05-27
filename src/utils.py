@@ -22,14 +22,14 @@ def peakfinder(gm, wm, lower_q, upper_q):
     gm_peak = Counter(threshold_percentile(gm, lower_q, upper_q)).most_common(1)[0][0]
     wm_peak = Counter(threshold_percentile(wm, lower_q, upper_q)).most_common(1)[0][0]
     bg = 0.5 * (gm_peak + wm_peak)
-    return bg
+    return bg, gm_peak, wm_peak
 
 def threshold_percentile(x, lower_q, upper_q):
     x = x.numpy()
     lq = np.percentile(x, lower_q)
     uq = np.percentile(x, upper_q)
     x = x[np.logical_and(x>lq, x<=uq)]
-    return x.flatten()
+    return x.flatten().round()
 
 def find_logger_basefilename(logger):
     """Finds the logger base filename(s) currently there is only one
