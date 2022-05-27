@@ -149,7 +149,6 @@ class noelTexturesPy:
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
-
     def __gradient_magnitude(self):
         logger.info("computing gradient magnitude")
         print("computing gradient magnitude")
@@ -174,22 +173,20 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file != None:
             t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
             t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
-            bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
+            bg_t1, gm_t1, wm_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
             ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
-
 
         if self._t1file != None and self._t2file == None:
             t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
             t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
-            bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
+            bg_t1, gm_t1, wm_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
             ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
-
 
     def __generate_QC_maps(self):
         logger.info('generating QC report')
