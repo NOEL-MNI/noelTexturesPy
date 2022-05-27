@@ -173,7 +173,7 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file != None:
             t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
             t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
-            bg_t1, gm_t1, wm_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
+            bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
@@ -182,7 +182,7 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file == None:
             t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
             t1_n4_wm = self._t1_n4 * self._t1_n4.new_image_like(self._wm)
-            bg_t1, gm_t1, wm_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
+            bg_t1 = peakfinder(t1_n4_gm, t1_n4_wm, 1, 99.5)
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
