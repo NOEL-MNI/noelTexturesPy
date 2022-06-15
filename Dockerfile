@@ -1,4 +1,4 @@
-FROM noelmni/pynoel-gui-base:dev-aarch64
+FROM noelmni/pynoel-gui-base:dev
 LABEL maintainer=<ravnoor@gmail.com>
 
 WORKDIR /noelpy
