@@ -1,5 +1,4 @@
-import base64
-import os, sys, glob, shutil
+import base64, glob, os, shutil, sys
 from urllib.parse import quote as urlquote
 
 from flask import Flask, send_from_directory
