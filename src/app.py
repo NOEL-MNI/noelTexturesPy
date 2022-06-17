@@ -1,4 +1,4 @@
-import base64, glob, os, shutil, sys
+import base64, glob, logging, os, shutil, sys
 from urllib.parse import quote as urlquote
 
 from flask import Flask, send_from_directory
@@ -33,6 +33,9 @@ server = Flask(__name__)
 # app = dash.Dash(server=server, external_stylesheets=external_stylesheets)
 app = Dash(server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
+# initialize a logger to prevent flask from logging to console
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 @server.route("/download/<path:path>")
 def download(path):
