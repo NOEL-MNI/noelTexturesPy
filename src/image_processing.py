@@ -57,7 +57,6 @@ class noelTexturesPy:
 
         if self._t1file == None and self._t2file == None:
         	logger.warn("Please load the data first.", "The data is missing")
-        	return
 
         if self._t1file != None and self._t2file != None:
             self._t1 = ants.image_read( self._t1file )
