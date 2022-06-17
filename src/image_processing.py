@@ -13,7 +13,7 @@ import multiprocessing
 from PIL import Image
 from utils import compute_RI, peakfinder, random_case_id
 
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
