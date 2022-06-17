@@ -11,7 +11,7 @@ import numpy as np
 import multiprocessing
 # import zipfile
 from PIL import Image
-from utils import *
+from utils import compute_RI, peakfinder, random_case_id
 
 
 logger = logging.getLogger(__name__)
