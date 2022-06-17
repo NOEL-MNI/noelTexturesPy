@@ -1,4 +1,5 @@
 import os
+# restrict compute to CPU only
 os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 import sys
 import time
@@ -13,6 +14,7 @@ import multiprocessing
 from PIL import Image
 from utils import compute_RI, peakfinder, random_case_id
 
+# reduce tensorflow logging verbosity
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
