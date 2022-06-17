@@ -9,7 +9,7 @@ import ants
 from antspynet.utilities import brain_extraction
 import numpy as np
 import multiprocessing
-import zipfile
+# import zipfile
 from PIL import Image
 from utils import *
 
