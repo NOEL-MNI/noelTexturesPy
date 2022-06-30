@@ -52,6 +52,7 @@ jobs:
 
   main_push_to_registry:
     name: Push Docker pynoel-gui-app image to Docker Hub
+    needs: base_push_to_registry
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
