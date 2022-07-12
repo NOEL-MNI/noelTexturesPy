@@ -1,3 +1,5 @@
+ARG BASE_SHORT_SHA_TAG
+
 FROM noelmni/pynoel-gui-base:${BASE_SHORT_SHA_TAG}
 LABEL maintainer=<ravnoor@gmail.com>
 

@@ -50,9 +50,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Set BASE_SHORT_SHA_TAG variable to build the subsequent image
-        run: echo "BASE_SHORT_SHA_TAG=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-
   main_push_to_registry:
     name: Push Docker pynoel-gui-app image to Docker Hub
     needs: base_push_to_registry
@@ -87,8 +84,23 @@ jobs:
           labels: |
             org.opencontainers.image.title="noelTexturesPy"
             org.opencontainers.image.description="Dash app to generate textures maps from MRI using Advanced Normalization Tools"
-            org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"
-     
+            org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"    
+   
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+      - name: Get branch name (pull request)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: Set BASE_SHORT_SHA_TAG variable to build the subsequent app image
+        run: |
+          echo "BASE_SHORT_SHA_TAG=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -96,6 +108,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
-            BASE_SHORT_SHA_TAG={{branch}}-${BASE_SHORT_SHA_TAG}
+            BASE_SHORT_SHA_TAG=${{ env.BRANCH_NAME }}-${{ env.BASE_SHORT_SHA_TAG }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
