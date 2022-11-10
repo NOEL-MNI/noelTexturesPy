@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'docker_ci'
+      - 'master'
 
 jobs:
   base_push_to_registry:
