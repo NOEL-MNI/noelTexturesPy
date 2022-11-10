@@ -1,4 +1,6 @@
-FROM noelmni/pynoel-gui-base:dev-67fb9e0
+ARG BASE_SHORT_SHA_TAG
+
+FROM noelmni/pynoel-gui-base:${BASE_SHORT_SHA_TAG}
 LABEL maintainer=<ravnoor@gmail.com>
 
 WORKDIR /noelpy
