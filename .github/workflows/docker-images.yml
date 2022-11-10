@@ -81,6 +81,8 @@ jobs:
             type=sha,prefix={{branch}}-
             # dynamically set the branch name
             type=raw,value={{branch}}-latest
+            # set the latest branch name
+            type=raw,value=latest
           labels: |
             org.opencontainers.image.title="noelTexturesPy"
             org.opencontainers.image.description="Dash app to generate textures maps from MRI using Advanced Normalization Tools"
