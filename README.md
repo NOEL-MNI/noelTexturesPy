@@ -16,6 +16,7 @@ OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesP
 docker pull noelmni/pynoel-gui-app:latest
 docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
 ```
+Access the Web UI at http://localhost:9999
 
 ## Build the app
 #### M1 Apple Silicon supported, M2 untested as of 10-11-2022
@@ -34,8 +35,6 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 docker buildx create --name multiarch --driver docker-container --use
 docker buildx inspect --bootstrap
 ```
-
-Access the GUI at http://localhost:9999
 
 ## Required inputs
 Please ensure the file(s) are renamed accordingly before uploading it to `noelTexturesPy`.
