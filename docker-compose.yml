@@ -2,16 +2,14 @@ version: "3.3"
 
 services:
   pynoel-gui-app:
+    restart: always
+    image: noelmni/pynoel-gui-app:latest
     container_name: pynoel-gui-app
     environment:
-      - PUID=2551
-      - PGID=200
+      - PUID=1001 # change to $(id -u)
+      - PGID=1001 # change to $(id -g)
       - TZ=America/Toronto
-      - DISPLAY=${DISPLAY}
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    # ports:
-    #   - "5800:5800"
-    image: neuressence/pynoel-gui-app:latest
-    restart: always
-    volumes:
-      - "${PWD}:/data"
+    ports:
+      - "9999:9999"
+    # volumes:
+    #   - "./data:/data"
