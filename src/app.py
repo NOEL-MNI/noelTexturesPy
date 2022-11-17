@@ -32,6 +32,7 @@ if not os.path.exists(UPLOAD_DIRECTORY):
 server = Flask(__name__)
 # app = dash.Dash(server=server, external_stylesheets=external_stylesheets)
 app = Dash(server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.title = "noelTexturesPy"
 
 # initialize a logger to prevent flask from logging to console
 log = logging.getLogger('werkzeug')
