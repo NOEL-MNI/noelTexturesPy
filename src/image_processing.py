@@ -78,11 +78,11 @@ class noelTexturesPy:
         logger.info("registration to MNI template space")
         print("registration to MNI template space")
         if self._t1file != None and self._t2file != None:
-            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine', aff_metric = 'GC' )
+            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
             self._t2_reg = ants.apply_transforms(fixed = self._icbm152, moving = self._t2, transformlist = self._t1_reg['fwdtransforms'])
 
         if self._t1file != None and self._t2file == None:
-            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine', aff_metric = 'GC' )
+            self._t1_reg = ants.registration( fixed = self._icbm152, moving = self._t1, type_of_transform = 'Affine' )
 
         if self._t2file != None and self._t1file == None:
             self._t2_reg = ants.registration( fixed = self._icbm152, moving = self._t2, type_of_transform = 'Affine' )
