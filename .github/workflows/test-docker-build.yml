@@ -33,7 +33,7 @@ jobs:
           images: noelmni/pynoel-gui-base
           tags: |
             # dynamically set the branch name as a prefix/suffix
-            type=sha,prefix={{branch}}-,suffix=test_CI
+            type=sha,prefix={{ github.ref_name }}-,suffix=test_CI
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
@@ -71,7 +71,7 @@ jobs:
           images: noelmni/pynoel-gui-app
           tags: |
             # dynamically set the branch name as a prefix/suffix
-            type=sha,prefix={{branch}}-,suffix=test_CI   
+            type=sha,prefix={{ github.ref_name }}-,suffix=test_CI   
    
       - name: Get branch name (merge)
         if: github.event_name != 'pull_request'
