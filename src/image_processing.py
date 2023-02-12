@@ -94,17 +94,21 @@ class noelTexturesPy:
         if self._t1file != None and self._t2file != None:
             self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation = (0.05, 0.95, 256), usen3 = self._usen3), "Normalize") * 100
             self._t2_n4 = ants.iMath(self._t2_reg.abp_n4(usen3 = self._usen3), "Normalize") * 100
-            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
-            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
+            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii'))
+            # nib.save(self._t1_n4.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_final.nii'))
+            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii'))
+            # nib.save(self._t2_n4.to_nibabel(), os.path.join(self._outputdir, self._id+'_t2_final.nii'))
 
         if self._t1file != None and self._t2file == None:
             self._t1_n4 = ants.iMath(self._t1_reg['warpedmovout'].abp_n4(intensity_truncation = (0.05, 0.95, 256), usen3 = self._usen3), "Normalize") * 100
-            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii.gz'))
+            ants.image_write(self._t1_n4, os.path.join(self._outputdir, self._id+'_t1_final.nii'))
+            # nib.save(self._t1_n4.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_final.nii'))
 
         if self._t2file != None and self._t1file == None:
             self._t2_n4 = ants.iMath(self._t2_reg['warpedmovout'].abp_n4(usen3 = self._usen3), "Normalize") * 100
-            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii.gz'))
-
+            ants.image_write(self._t2_n4, os.path.join(self._outputdir, self._id+'_t2_final.nii'))
+            # nib.save(self._t2_n4.to_nibabel(), os.path.join(self._outputdir, self._id+'_t2_final.nii'))
+            
 
     def __skull_stripping(self):
         logger.info("performing brain extraction")
@@ -150,22 +154,25 @@ class noelTexturesPy:
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
+
     def __gradient_magnitude(self):
         logger.info("computing gradient magnitude")
         print("computing gradient magnitude")
         if self._t1file != None and self._t2file != None:
             self._grad_t1 = ants.iMath(self._t1_n4, "Grad", 1)
             # self._grad_t2 = ants.iMath(self._t2_n4, "Grad", 1)
-            ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii.gz'))
-            # ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t2_gradient_magnitude.nii.gz'))
+            ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii'))
+            # nib.save(self._grad_t1.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii'))
+            # ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t2_gradient_magnitude.nii'))
 
         if self._t1file != None and self._t2file == None:
             self._grad_t1 = ants.iMath(self._t1_n4, "Grad", 1)
-            ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii.gz'))
+            ants.image_write( self._grad_t1, os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii'))
+            # nib.save(self._grad_t1.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_gradient_magnitude.nii'))
 
         # if self._t2file != None and self._t1file == None:
         #     self._grad_t2 = ants.iMath(self._t2_n4, "Grad", 1)
-            # ants.image_write( self._grad_t2, os.path.join(self._outputdir, self._id+'_t2_gradient_magnitude.nii.gz'))
+            # ants.image_write( self._grad_t2, os.path.join(self._outputdir, self._id+'_t2_gradient_magnitude.nii'))
 
 
     def __relative_intensity(self):
@@ -178,7 +185,8 @@ class noelTexturesPy:
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
-            ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
+            ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii'))
+            # nib.save(self._ri.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii'))
 
         if self._t1file != None and self._t2file == None:
             t1_n4_gm = self._t1_n4 * self._t1_n4.new_image_like(self._gm)
@@ -187,7 +195,9 @@ class noelTexturesPy:
             t1_ri = compute_RI(self._t1_n4.numpy(), bg_t1, self._mask.numpy())
             tmp = self._t1_n4.new_image_like(t1_ri)
             self._ri = ants.smooth_image(tmp, sigma=3, FWHM=True)
-            ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii.gz'))
+            ants.image_write( self._ri, os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii'))
+            # nib.save( self._ri.to_nibabel(), os.path.join(self._outputdir, self._id+'_t1_relative_intensity.nii'))
+
 
     def __generate_QC_maps(self):
         logger.info('generating QC report')

@@ -168,7 +168,7 @@ def list_files(output_dir=output_dir):
     f = []
     for dirpath, dirnames, filenames in os.walk(output_dir):
         for name in filenames:
-            if name.endswith(("nii.gz", "nii", "pdf")):
+            if name.endswith(("nii", "pdf")):
                 f.extend(filenames)
     return sorted(set(f))
 
