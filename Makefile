@@ -23,10 +23,10 @@ update-requirements:
 	docker run --rm -it --entrypoint /opt/conda/bin/python $(ACCOUNT)/$(SVC_1):$(TAG) -m pip list --format=freeze
 
 run-build:
-	docker run --rm -p 9999:9999 $(ACCOUNT)/$(SERVICE):$(TAG)
+	docker run --rm -p 9999:9999 $(ACCOUNT)/$(SVC_1):$(TAG)
 
 bash:
-	docker run --rm -it --entrypoint bash $(ACCOUNT)/$(SERVICE):$(TAG)
+	docker run --rm -it --entrypoint bash $(ACCOUNT)/$(SVC_1):$(TAG)
 
 prune:
 	docker image prune
