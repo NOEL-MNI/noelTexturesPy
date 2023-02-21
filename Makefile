@@ -19,6 +19,9 @@ build-nocache:
 	docker buildx build --load --platform $(ARCH) -t $(ACCOUNT)/$(SVC_1):$(TAG) . --no-cache
 	sed -i 's/${TAG}/${BASE_SHORT_SHA_TAG}/g' Dockerfile 
 
+update-requirements:
+	docker run --rm -it --entrypoint /opt/conda/bin/python $(ACCOUNT)/$(SVC_1):$(TAG) -m pip list --format=freeze
+
 run-build:
 	docker run --rm -p 9999:9999 $(ACCOUNT)/$(SERVICE):$(TAG)
 
