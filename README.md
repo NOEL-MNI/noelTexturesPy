@@ -1,5 +1,5 @@
 # noelTexturesPy
-Dash app to generate textures maps from MRI using Advanced Normalization Tools ([ANTsPy](https://antspy.readthedocs.io/en/latest/))
+Dash app to generate textures maps from MRI using Advanced Normalization Tools ([ANTsPy](https://antspyx.readthedocs.io/en/latest/))
 <hr>
 
 ## Prerequisites
@@ -19,7 +19,7 @@ docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
 Access the Web UI at http://localhost:9999
 
 ## Build the app
-#### M1 Apple Silicon supported, M2 untested as of 10-11-2022
+#### M1 Apple Silicon supported/tested, M2 untested as of 21-02-2023 (but will likely work without issues)
 ```bash
 git clone https://github.com/NOEL-MNI/noelTexturesPy.git
 cd noelTexturesPy
