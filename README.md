@@ -26,8 +26,7 @@ cd noelTexturesPy
 PLATFORMS=linux/arm64,linux/amd64
 TAG=latest
 docker buildx build --push --platform ${PLATFORMS} -t noelmni/pynoel-gui-base:${TAG} base-docker-image/
-sed -i 's/${BASE_SHORT_SHA_TAG}/${TAG}/g' Dockerfile
-docker buildx build --push --platform ${PLATFORMS} -t noelmni/pynoel-gui-app:${TAG} .
+docker buildx build --push --platform ${PLATFORMS} -t noelmni/pynoel-gui-app:${TAG} . --build-arg BASE_SHORT_SHA_TAG=${TAG}
 ```
 ### Troubleshoot `buildx` errors
 ```bash
