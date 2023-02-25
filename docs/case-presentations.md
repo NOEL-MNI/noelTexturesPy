@@ -27,6 +27,6 @@ Small FCD, not visible on T1; on the other hand, FLAIR images show the subtle tr
 
 ### Case 5
 
-![](./assets/media/image69.png)![](./assets/media/image70.png)![](./assets/media/image71.png)![](./assets/media/image72.tiff)
+![](./assets/media/image69.png)![](./assets/media/image70.png)![](./assets/media/image71.png)![](./assets/media/image72.png)
 
 ![](./assets/media/image73.png)![](./assets/media/image71.png)
