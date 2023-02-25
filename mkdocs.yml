@@ -65,11 +65,7 @@ plugins:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - minify:
       minify_html: true
-  - optimize:
-      optimize_png: true
-      optimize_png_speed: 4
-      optimize_png_strip: true
-      concurrency: 4
+      
 # Customization
 extra:
   annotate:
