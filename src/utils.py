@@ -44,3 +44,12 @@ def random_case_id():
     digits  = ''.join(random.choices(string.digits, k=16))
     x = letters[:3].lower() + '_' + digits[:4]
     return x
+
+def download_ants_data():
+    from antspynet.utilities import get_pretrained_network, get_antsxnet_data
+    antsxnet_cache_directory = '/noelpy/cache'
+    weights_file_name_prefix = "brainExtractionRobustT1"
+    get_pretrained_network(weights_file_name_prefix,
+            antsxnet_cache_directory=antsxnet_cache_directory)
+    get_antsxnet_data("S_template3",
+            antsxnet_cache_directory=antsxnet_cache_directory)
