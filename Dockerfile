@@ -18,6 +18,12 @@ RUN addgroup --gid 1001 noel && \
 RUN chown -R noel:noel /noelpy && \
     chmod 755 /noelpy
 
+RUN mkdir /noelpy/cache && \
+    chmod 777 /noelpy/cache && \
+    umask 000 /noelpy/cache
+
+RUN ldconfig -C /noelpy/cache/libs
+
 USER noel
 
 EXPOSE 9999
