@@ -4,7 +4,7 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 
 | **Demo**                       | **Documentation**                          |
 |--------------------------------|--------------------------------------------|
-| https://demo.noel.neocortex.ca | https://noel-mni.github.io/noelTexturesPy/ |
+|<a href="https://demo.noel.neocortex.ca" target="_blank">demo.noel.neocortex.ca</a>  | <a href="https://noel-mni.github.io/noelTexturesPy/" target="_blank">noel-mni.github.io/noelTexturesPy</a>  |
 | username: demo                 |                                            |
 | password: demo                 |                                            |
 
