@@ -1,6 +1,7 @@
 # noelTexturesPy
 Dash app to generate textures maps from MRI using Advanced Normalization Tools ([ANTsPy](https://antspyx.readthedocs.io/en/latest/))
 <hr>
+
 | **Demo**                       | **Documentation**                          |
 |--------------------------------|--------------------------------------------|
 | https://demo.noel.neocortex.ca | https://noel-mni.github.io/noelTexturesPy/ |
