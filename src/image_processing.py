@@ -1,12 +1,19 @@
 import os
-# restrict compute to CPU only
-os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 import sys
 import time
 import logging
+os.environ["MPLCONFIGDIR"]="/noelpy/cache/"
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.pyplot as plt
 import ants
+# reduce/increase tensorflow logging verbosity
+# 0 = all messages are logged (default behavior)
+# 1 = INFO messages are not printed
+# 2 = INFO and WARNING messages are not printed
+# 3 = INFO, WARNING, and ERROR messages are not printed
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
+# restrict compute to CPU only
+os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 from antspynet.utilities import brain_extraction
 import numpy as np
 import multiprocessing
@@ -14,8 +21,6 @@ import multiprocessing
 from PIL import Image
 from utils import compute_RI, peakfinder, random_case_id
 
-# reduce tensorflow logging verbosity
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -233,7 +238,7 @@ class noelTexturesPy:
         else:
             sys.exit("invalid contrast specified for brain extraction")
 
-        prob = brain_extraction(image, modality=self._modality)
+        prob = brain_extraction(image, modality=self._modality, verbose=True, antsxnet_cache_directory = '/noelpy/cache/')
         # mask can be obtained as:
         mask = ants.threshold_image(prob, low_thresh=0.5, high_thresh=1.0, inval=1, outval=0, binary=True)
         return mask
