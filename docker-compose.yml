@@ -11,6 +11,11 @@ services:
       - PUID=$PUID
       - PGID=$PGID
       - TZ=$TZ
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 8G
     ports:
       - "127.0.0.1:9999:9999"
     volumes:
@@ -103,10 +108,10 @@ services:
       #   protocol: tcp
       #   mode: host
     volumes:
-      - $DOCKERDIR/traefik/rules/web:/rules # file provider directory
+      - $DOCKERDIR/traefik/rules:/rules # file provider directory
       # - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
       - $DOCKERDIR/traefik/acme/acme.json:/acme.json # cert location - you must touch this file and change permissions to 600
-      - $DOCKERDIR/logs/traefik:/logs # for fail2ban or crowdsec
+      - $DOCKERDIR/traefik/logs:/logs # for fail2ban or crowdsec
     environment:
       - TZ=$TZ
       - CLOUDFLARE_EMAIL=$CLOUDFLARE_EMAIL
