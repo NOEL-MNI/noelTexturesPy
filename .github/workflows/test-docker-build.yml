@@ -23,7 +23,22 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
+
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+      - name: Get branch name (pull request)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: Set BASE_SHORT_SHA_TAG variable to build the subsequent app image
+        run: |
+          echo "BASE_SHORT_SHA_TAG=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}-test_CI"
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -31,7 +46,7 @@ jobs:
           images: noelmni/pynoel-gui-base
           tags: |
             # dynamically set the branch name as a prefix/suffix
-            type=sha,prefix={{branch}}-
+            type=raw,prefix=${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}-test_CI
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -61,15 +76,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: noelmni/pynoel-gui-app
-          tags: |
-            # dynamically set the branch name as a prefix/suffix
-            type=sha,prefix={{branch}}-
    
       - name: Get branch name (merge)
         if: github.event_name != 'pull_request'
@@ -84,7 +90,16 @@ jobs:
       - name: Set BASE_SHORT_SHA_TAG variable to build the subsequent app image
         run: |
           echo "BASE_SHORT_SHA_TAG=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
-          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}-test_CI"
+          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}"
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: noelmni/pynoel-gui-app
+          tags: |
+            # dynamically set the branch name as a prefix/suffix
+            type=raw,prefix=${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
