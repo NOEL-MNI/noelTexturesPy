@@ -1,4 +1,4 @@
-FROM noelmni/antspynet:master-86a94c4 as builder
+FROM noelmni/antspynet:master-550bcfa as builder
 
 RUN adduser --quiet --disabled-password noel
 
@@ -15,7 +15,7 @@ RUN python -m pip install numpy scipy pandas matplotlib pillow \
 		chart_studio nibabel pyyaml webcolors
 
 # production image
-FROM debian:bullseye-20230703-slim
+FROM debian:bookworm-slim
 ENV TZ=America/Montreal
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 COPY --from=builder /opt/conda /opt/conda
