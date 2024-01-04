@@ -37,7 +37,7 @@ jobs:
       - name: Set BASE_SHORT_SHA_TAG variable to build the subsequent app image
         run: |
           echo "BASE_SHORT_SHA_TAG=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
-          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}-test_CI"
+          echo "BASE_SHORT_SHA_TAG equals ${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -46,7 +46,7 @@ jobs:
           images: noelmni/pynoel-gui-base
           tags: |
             # dynamically set the branch name as a prefix/suffix
-            type=raw,prefix=${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}-test_CI
+            type=raw,prefix=${{env.BRANCH_NAME}}-${{env.BASE_SHORT_SHA_TAG}}
       
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
