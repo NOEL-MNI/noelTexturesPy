@@ -4,7 +4,7 @@ SVC_1		:= pynoel-gui-app
 UID			:= 2551
 GID			:= 618
 IMAGE 	:= $(ACCOUNT)/$(SERVICE) # noelmni/deepmask
-TAG			:= master-1537c4c
+TAG			:= master-550bcfa
 ARCH		:= linux/amd64 # linux/arm64,linux/amd64
 
 build:
