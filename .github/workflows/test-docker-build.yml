@@ -9,6 +9,11 @@ jobs:
     name: Test Docker pynoel-gui-base build
     runs-on: ubuntu-latest
     steps:
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
       - name: Check out the repo
         uses: actions/checkout@v4
 
@@ -62,6 +67,11 @@ jobs:
     needs: base_image
     runs-on: ubuntu-latest
     steps:
+      - name: Remove unnecessary files
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          
       - name: Check out the repo
         uses: actions/checkout@v4
 
