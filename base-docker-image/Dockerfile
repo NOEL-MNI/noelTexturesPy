@@ -1,4 +1,4 @@
-FROM noelmni/antspynet:master-550bcfa as builder
+FROM noelmni/antspynet:master-58b19c9 as builder
 
 RUN adduser --quiet --disabled-password noel
 
