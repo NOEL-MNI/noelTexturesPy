@@ -203,5 +203,13 @@ def update_output(n):
     return data
 
 
-if __name__ == "__main__":
-    app.run_server(host="0.0.0.0", debug=False, port=9999)
+def server():
+    app.run_server(host='0.0.0.0', debug=False, port=9999)
+
+
+def server_debug():
+    app.run_server(host='0.0.0.0', debug=True, port=9999)
+
+
+if __name__ == '__main__':
+    server()
