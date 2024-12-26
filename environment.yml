@@ -1,0 +1,23 @@
+name: noelTexturesPy
+channels:
+  - conda-forge
+  - plotly
+dependencies:
+  - python>=3.12,<3.14.0a0
+  - numpy>=1.26.4,<2
+  - scipy>=1.14.1,<2
+  - pandas>=2.2.3,<3
+  - matplotlib>=3.9.2,<4
+  - pillow>=11.0.0,<12
+  - dash>=2.18.2,<3
+  - flask>3.0.3,<4
+  - nibabel>=5.3.2,<6
+  - pyyaml>=6.0.2,<7
+  - webcolors>=1.12
+  - pip>=24.3.1,<25
+  - pip:
+    - antspyx>=0.4.2,<1
+    - antspynet>=0.2.9,<1
+    - chart-studio>=1.1.0,<2
+    - dash-bootstrap-components>=1.6.0,<2
+    - dash-html-components>=2.0.0,<3
