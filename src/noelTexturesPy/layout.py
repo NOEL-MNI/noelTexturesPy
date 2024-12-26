@@ -2,6 +2,8 @@ import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import html
 
+from noelTexturesPy import __version__ as app_version
+
 jumbotron = html.Div(
     dbc.Container(
         [
@@ -81,6 +83,15 @@ body = dbc.Container(
                                 'borderRadius': '5px',
                                 'textAlign': 'center',
                                 'margin': '10px',
+                            },
+                        ),
+                        # add version information
+                        html.Footer(
+                            f'Version: {app_version}',
+                            style={
+                                'position': 'fixed',
+                                'bottom': '10px',
+                                'right': '10px',
                             },
                         ),
                     ],
