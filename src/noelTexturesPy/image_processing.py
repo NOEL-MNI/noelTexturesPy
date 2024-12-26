@@ -12,12 +12,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from antspynet.utilities import brain_extraction
 from matplotlib.backends.backend_pdf import PdfPages
-from noelTexturesPy.custom_logging import custom_logger
-from noelTexturesPy.utils import compute_RI
-from noelTexturesPy.utils import peakfinder
 
 # import zipfile
 from PIL import Image
+
+from noelTexturesPy.custom_logging import custom_logger
+from noelTexturesPy.utils import compute_RI
+from noelTexturesPy.utils import peakfinder
 
 # reduce tensorflow logging verbosity
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
