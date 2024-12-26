@@ -1,0 +1,47 @@
+[project]
+authors = ["Ravnoor Gill <ravnoor.gill@mcgill.ca>"]
+channels = ["conda-forge"]
+description = "Plotly Dash app to generate textures maps from MRI"
+name = "noelTexturesPy"
+platforms = ["linux-64", "osx-arm64"]
+version = "0.2.0"
+
+[tasks]
+app = { cmd = "python3 src/noelTexturesPy/app.py" }
+postinstall-e = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
+postinstall = "pip install --no-build-isolation --no-deps --disable-pip-version-check ."
+fmt = "ruff"
+lint = "pylint"
+
+[dependencies]
+numpy = ">=1.26.4, <2"
+scipy = ">=1.14.1, <2"
+pandas = ">=2.2.3, <3"
+matplotlib = ">=3.9.2, <4"
+pillow = ">=11.0.0, <12"
+dash = ">=2.18.2, <3"
+flask = ">3.0.3, <4"
+nibabel = ">=5.3.2, <6"
+pyyaml = ">=6.0.2, <7"
+webcolors = ">=1.12"
+pip = ">=24.3.1,<25"
+
+[pypi-dependencies]
+dash-bootstrap-components = ">=1.6.0, <2"
+dash-html-components = ">=2.0.0, <3"
+chart-studio = ">=1.1.0, <2"
+
+[feature.ants.pypi-dependencies]
+antspyx = ">=0.4.2, <1"
+antspynet = ">=0.2.9, <1"
+
+[feature.docker]
+platforms = ["linux-64", "linux-aarch64"]
+
+[feature.dev.pypi-dependencies]
+datalad = "*"
+
+[environments]
+dev = {features = ["ants", "dev"], solve-group = "docker-group"}
+default = {features = ["ants"], solve-group = "docker-group"}
+docker = {features = ["docker"], solve-group = "docker-group"}
