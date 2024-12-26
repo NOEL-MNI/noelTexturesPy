@@ -14,7 +14,6 @@ def custom_logger():
     TEMPDIR = os.environ.get('TEMPDIR')
 
     log_filename = os.path.join(TEMPDIR, str(case_id) + '.log')
-    print(log_filename)
 
     # create a file handler
     try:
@@ -25,7 +24,7 @@ def custom_logger():
             with open(log_filename, 'w') as f:
                 pass  # create a new empty file
     except OSError as e:
-        print("Error: %s - %s." % (e.filename, e.strerror))
+        print("error: %s - %s." % (e.filename, e.strerror))
 
     handler = logging.FileHandler(log_filename)
     handler.setLevel(logging.INFO)
@@ -36,4 +35,6 @@ def custom_logger():
 
     # add the handlers to the logger
     logger.addHandler(handler)
+
+    logger.info(f'logger has been initialized, logfile: {log_filename}')
     return logger, log_filename, case_id
