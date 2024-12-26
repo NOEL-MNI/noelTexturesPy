@@ -105,3 +105,10 @@ venv.bak/
 
 #MISC
 .DS_Store
+
+# pixi environments
+.pixi
+*.egg-info
+
+# scm versioning
+src/noelTexturesPy/_version.py
