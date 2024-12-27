@@ -48,6 +48,7 @@ exclude = ["web*", "docker*", "images*", "templates*", "docs*", "build*", ".pixi
 
 [tool.setuptools_scm]
 write_to = "src/noelTexturesPy/_version.py"
+version_scheme = "no-guess-dev"
 
 [tool.ruff.format]
 quote-style = 'single'
