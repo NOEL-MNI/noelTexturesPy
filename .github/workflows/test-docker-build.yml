@@ -5,9 +5,8 @@ on:
     types: [opened, reopened]
 
 jobs:
-  image:
+  docker-image:
     name: Test Docker pynoel-gui-app build
-    needs: base_image
     runs-on: ubuntu-latest
     steps:
       - name: Remove unnecessary files
