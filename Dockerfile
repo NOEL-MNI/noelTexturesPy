@@ -9,16 +9,13 @@ RUN echo "installing environment" && \
     micromamba install --name base --file environment.yml --yes && \
     micromamba clean --all --yes
 
-COPY dist/ .
-ARG MAMBA_DOCKERFILE_ACTIVATE=1
-RUN pip install --no-deps *.whl
-
 WORKDIR /usr/local/src
 
-# run tests
-COPY tests tests
-COPY templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz templates/
+COPY . .
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+RUN pip install --no-deps dist/*.whl
 
+# run tests
 RUN bash tests/run_tests.sh
 
 # production image

@@ -47,6 +47,24 @@ jobs:
           tags: |
             # dynamically set the branch name as a prefix/suffix
             type=raw,value=${{ env.BRANCH_NAME }}-${{ env.BASE_SHORT_SHA_TAG }}
+      
+      - name: Setup Python to build app wheel for Docker image
+        id: meta
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+          
+      - name: Build wheels
+        run: python -m build --wheel --outdir dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels
+          path: dist/*.whl
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
