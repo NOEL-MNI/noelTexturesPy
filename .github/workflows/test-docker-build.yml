@@ -49,7 +49,6 @@ jobs:
             type=raw,value=${{ env.BRANCH_NAME }}-${{ env.BASE_SHORT_SHA_TAG }}
       
       - name: Setup Python to build app wheel for Docker image
-        id: meta
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -58,8 +57,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build
-          
-      - name: Build wheels
+
+      - name: Build and upload wheels
+        id: wheels
         run: python -m build --wheel --outdir dist/
       - uses: actions/upload-artifact@v4
         with:
