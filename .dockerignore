@@ -1,0 +1,17 @@
+.env
+.gitignore
+ANTSCopyright.txt
+Dockerfile
+LICENSE
+Makefile
+Procfile
+README.md
+docker-compose.yml
+mkdocs.yml
+requirements.txt
+runtime.txt
+.github/*
+docs/*
+traefik/*
+.pixi/*
+build/*

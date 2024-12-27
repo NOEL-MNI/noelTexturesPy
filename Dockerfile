@@ -1,26 +1,38 @@
-ARG BASE_SHORT_SHA_TAG
-
-FROM noelmni/pynoel-gui-base:${BASE_SHORT_SHA_TAG}
+FROM noelmni/antspynet:master-58b19c9-mamba as builder
 LABEL maintainer=<ravnoor@gmail.com>
 
-WORKDIR /noelpy
+USER root
 
-COPY Procfile /noelpy
-COPY templates/* /noelpy/templates/
-COPY src/utils.py /noelpy
-COPY src/image_processing.py /noelpy
-COPY src/app.py /noelpy
+COPY --chown=$MAMBA_USER:$MAMBA_USER environment.docker.yml environment.yml
+RUN echo "installing environment" && \
+		micromamba clean --all --yes && \
+    micromamba install --name base --file environment.yml --yes && \
+    micromamba clean --all --yes
 
-# create and set non-root USER
-RUN addgroup --gid 1001 noel && \
-    adduser --no-create-home --system --uid 1001 --ingroup noel noel
+COPY dist/ .
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+RUN pip install --no-deps *.whl
 
-RUN chown -R noel:noel /noelpy && \
-    chmod 755 /noelpy
+WORKDIR /usr/local/src
 
-USER noel
+# run tests
+COPY tests tests
+COPY templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz templates/
+
+RUN bash tests/run_tests.sh
+
+# production image
+FROM mambaorg/micromamba:2-debian12-slim
+ENV TZ=America/Montreal
+COPY --from=builder /opt/conda /opt/conda
+USER $MAMBA_USER
+
+WORKDIR /usr/local/src
+
+COPY templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz templates/
 
 EXPOSE 9999
 
-# ENTRYPOINT [ "gunicorn", "--access-logfile", "-", "--log-file", "./logs.log", "app:server", "-b", ":9999" ]
-ENTRYPOINT [ "python3", "app.py" ]
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+SHELL [ "/usr/local/bin/_dockerfile_shell.sh" ]
+ENTRYPOINT [ "/usr/local/bin/_entrypoint.sh", "textures_app" ]
