@@ -52,3 +52,15 @@ bash:
 
 prune:
 	docker image prune
+
+build-wheel:
+	# pip install --no-deps .
+	rm -rf dist/
+	python -m pip install build
+	python -m build --wheel
+
+dev-image: build-wheel
+	docker build -t noelmni/pynoel-gui-app:test-mamba -f Dockerfile .
+
+prod-image: build-wheel
+	docker buildx build --push --platform linux/arm64,linux/amd64 -t noelmni/pynoel-gui-app:master-58b19c9-mamba .
