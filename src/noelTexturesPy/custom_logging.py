@@ -10,7 +10,7 @@ def custom_logger():
     logger.setLevel(logging.INFO)
 
     case_id = random_case_id()
-    os.environ['TEMPDIR'] = os.environ.get('TEMPDIR', mkdtemp(prefix=f"{case_id}_"))
+    os.environ['TEMPDIR'] = os.environ.get('TEMPDIR', mkdtemp(prefix=f'{case_id}_'))
     TEMPDIR = os.environ.get('TEMPDIR')
 
     log_filename = os.path.join(TEMPDIR, str(case_id) + '.log')
@@ -24,7 +24,7 @@ def custom_logger():
             with open(log_filename, 'w') as f:
                 pass  # create a new empty file
     except OSError as e:
-        print("error: %s - %s." % (e.filename, e.strerror))
+        print('error: %s - %s.' % (e.filename, e.strerror))
 
     handler = logging.FileHandler(log_filename)
     handler.setLevel(logging.INFO)
