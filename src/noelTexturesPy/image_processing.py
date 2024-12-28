@@ -41,7 +41,7 @@ class noelTexturesPy:
         usen3=False,
         logger=logger,
     ):
-        super(noelTexturesPy, self).__init__()
+        super().__init__()
         self._id = id
         self._t1file = t1
         self._t2file = t2
