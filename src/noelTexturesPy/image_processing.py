@@ -7,10 +7,10 @@ import multiprocessing
 import sys
 import time
 
-import ants
+import ants  # type: ignore[import-untyped]
 import matplotlib.pyplot as plt
 import numpy as np
-from antspynet.utilities import brain_extraction
+from antspynet.utilities import brain_extraction  # type: ignore[import-untyped]
 from matplotlib.backends.backend_pdf import PdfPages
 
 # import zipfile
