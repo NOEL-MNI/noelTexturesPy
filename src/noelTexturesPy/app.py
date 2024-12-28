@@ -27,6 +27,7 @@ from noelTexturesPy.layout import jumbotron
 template = os.path.join('./templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
 TEMPDIR = os.environ.get('TEMPDIR')
+assert TEMPDIR is not None
 output_dir = os.path.join(TEMPDIR, 'outputs')
 upload_directory = os.path.join(TEMPDIR, 'uploads')
 
