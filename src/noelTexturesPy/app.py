@@ -216,13 +216,13 @@ def update_console(n):
     return data
 
 
-def server():
+def run_server():
     app.run_server(host='0.0.0.0', debug=False, port=9999)
 
 
-def server_debug():
+def run_debug_server():
     app.run_server(host='0.0.0.0', debug=True, port=9999)
 
 
 if __name__ == '__main__':
-    server()
+    run_server()
