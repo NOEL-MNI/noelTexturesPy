@@ -26,8 +26,6 @@ USER $MAMBA_USER
 
 WORKDIR /usr/local/src
 
-COPY templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz templates/
-
 EXPOSE 9999
 
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
