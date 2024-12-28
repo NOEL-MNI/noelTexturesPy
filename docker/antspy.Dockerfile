@@ -9,11 +9,11 @@ FROM mambaorg/micromamba:2-debian12-slim as builder
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      apt-transport-https \
-      build-essential \
-      ca-certificates \
-      git \
-      libpng-dev
+    apt-transport-https \
+    build-essential \
+    ca-certificates \
+    git \
+    libpng-dev
 
 USER $MAMBA_USER
 WORKDIR /usr/local/src

@@ -1,13 +1,13 @@
-FROM noelmni/antspynet:master-58b19c9-mamba as builder
+FROM noelmni/antspynet:master-58b19c9-mamba AS builder
 LABEL maintainer=<ravnoor@gmail.com>
 
 USER root
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER environment.docker.yml environment.yml
 RUN echo "installing environment" && \
-		micromamba clean --all --yes && \
-    micromamba install --name base --file environment.yml --yes && \
-    micromamba clean --all --yes
+  micromamba clean --all --yes && \
+  micromamba install --name base --file environment.yml --yes && \
+  micromamba clean --all --yes
 
 WORKDIR /usr/local/src
 

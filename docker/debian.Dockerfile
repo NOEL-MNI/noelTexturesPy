@@ -1,18 +1,18 @@
-FROM noelmni/antspynet:master-58b19c9 as builder
+FROM noelmni/antspynet:master-58b19c9 AS builder
 
 RUN adduser --quiet --disabled-password noel
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		build-essential libssl-dev \
-    	git bash nano wget curl htop img2pdf \
+	build-essential libssl-dev \
+	git bash nano wget curl htop img2pdf \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* ~/.cache
 
 RUN python -m pip install --upgrade pip setuptools wheel
 
 RUN python -m pip install numpy scipy pandas matplotlib pillow \
-		dash dash_bootstrap_components dash_html_components flask \
-		chart_studio nibabel pyyaml webcolors
+	dash dash_bootstrap_components dash_html_components flask \
+	chart_studio nibabel pyyaml webcolors
 
 # production image
 FROM debian:bookworm-slim

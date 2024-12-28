@@ -1,12 +1,12 @@
-FROM noelmni/antspynet:master-58b19c9-mamba as builder
+FROM noelmni/antspynet:master-58b19c9-mamba AS builder
 
 USER root
 
 COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yml environment.yml
 RUN echo "installing environment" && \
-		micromamba clean --all --yes && \
-    micromamba install --name base --file environment.yml --yes && \
-    micromamba clean --all --yes
+  micromamba clean --all --yes && \
+  micromamba install --name base --file environment.yml --yes && \
+  micromamba clean --all --yes
 
 COPY dist/ .
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
