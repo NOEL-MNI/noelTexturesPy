@@ -78,7 +78,7 @@ def download(path):
 
 def file_download_link(filename):
     """Create a Plotly Dash 'A' element that downloads a file from the app."""
-    location = '/download/{}'.format(urlquote(filename))
+    location = f'/download/{urlquote(filename)}'
     return html.A(filename, href=location)
 
 
@@ -138,23 +138,23 @@ def update_output(
         for file in files:
             if file.lower().find('t1') != -1:
                 t1 = os.path.join(uploads_dir, file)
-                logger.info('T1-weighted image detected: {}'.format(file))
-                print('T1-weighted image detected: {}'.format(file))
+                logger.info(f'T1-weighted image detected: {file}')
+                print(f'T1-weighted image detected: {file}')
             if file.lower().find('t2') != -1 or file.lower().find('flair') != -1:
                 t2 = os.path.join(uploads_dir, file)
-                logger.info('T2-weighted image detected: {}'.format(file))
-                print('T2-weighted image detected: {}'.format(file))
+                logger.info(f'T2-weighted image detected: {file}')
+                print(f'T2-weighted image detected: {file}')
     else:
         print('more than 2 modalities are not supported at this time')
         logger.warning('more than 2 modalities are not supported at this time')
 
     # id = output_text()
     if case_id is not None:
-        logger.info('Case ID: {}'.format(str(case_id)))
+        logger.info(f'Case ID: {str(case_id)}')
     else:
         case_id = random_case_id
         logger.info('assigning randomly generated case ID')
-        logger.info('case ID: {}'.format(case_id))
+        logger.info(f'case ID: {case_id}')
     noelTexturesPy(
         id=str(case_id),
         t1=t1,
@@ -169,7 +169,7 @@ def update_output(
         for f in glob.glob(os.path.join(uploads_dir, '*')):
             os.remove(f)
     except OSError as e:
-        print('Warning: %s - %s.' % (e.filename, e.strerror))
+        print(f'Warning: {e.filename} - {e.strerror}.')
 
     outputs = list_files(output_dir=output_dir)
 
@@ -203,7 +203,7 @@ def update_interval(n):
 
 @callback(Output('console-out', 'srcDoc'), [Input('interval2', 'n_intervals')])
 def update_console(n):
-    file = open(log_filename, 'r')
+    file = open(log_filename)
     data = ''
     lines = file.readlines()
     if lines.__len__() <= 14:
