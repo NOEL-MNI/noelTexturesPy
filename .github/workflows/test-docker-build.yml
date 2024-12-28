@@ -22,13 +22,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-   
+
       - name: Get branch name (merge)
         if: github.event_name != 'pull_request'
         shell: bash
@@ -47,7 +47,7 @@ jobs:
           tags: |
             # dynamically set the branch name as a prefix/suffix
             type=raw,value=${{ env.BRANCH_NAME }}-${{ env.BASE_SHORT_SHA_TAG }}
-      
+
       - name: Setup Python to build app wheel for Docker image
         uses: actions/setup-python@v5
         with:
@@ -70,7 +70,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
