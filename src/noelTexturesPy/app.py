@@ -39,7 +39,9 @@ if not os.path.exists(upload_directory):
 # normally, Dash creates its own Flask server internally - by creating our own,
 # we can create a route for downloading files directly:
 server = Flask(__name__)
-app = Dash(server=server, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(
+    server=server, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder='assets'
+)
 app.title = 'noelTexturesPy'
 
 # initialize a logger to prevent flask from logging to console
@@ -49,9 +51,6 @@ log.setLevel(logging.ERROR)
 app.layout = html.Div([jumbotron, body])
 app.config['suppress_callback_exceptions'] = True
 app.logger.disabled = True
-app.css.append_css(
-    {'external_url': 'https://use.fontawesome.com/releases/v5.8.2/css/all.css'}
-)
 
 
 def save_file(name, content):
