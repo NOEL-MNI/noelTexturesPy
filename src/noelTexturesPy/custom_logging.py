@@ -21,7 +21,7 @@ def custom_logger():
         if not os.path.exists(TEMPDIR):
             os.makedirs(TEMPDIR)
         if not os.path.exists(log_filename):
-            with open(log_filename, 'w') as f:
+            with open(log_filename, 'w'):
                 pass  # create a new empty file
     except OSError as e:
         print('error: %s - %s.' % (e.filename, e.strerror))
