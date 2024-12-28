@@ -21,10 +21,15 @@ dynamic = ["version"]
 
 dependencies = [
     "dash",
-    "plotly",
+    "dash-bootstrap-components",
+    "dash-html-components",
+    "flask",
     "antspyx>=0.4.2",
+    "antspynet>=0.2.9",
+    "matplotlib",
     "numpy",
     "pandas",
+    "Pillow"
 ]
 
 [project.urls]
@@ -70,3 +75,18 @@ ignore = [
 
 [tool.ruff.lint.isort]
 force-single-line = true
+
+[tool.mypy]
+pretty = true
+
+[[tool.mypy.overrides]]
+module = "dash_bootstrap_components.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ants.*"
+ignore_missing_imports = true
