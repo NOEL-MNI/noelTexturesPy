@@ -46,7 +46,7 @@ jobs:
         with:
           images: noelmni/pynoel-gui-app
           tags: |
-            type=raw,value=${{ env.BRANCH_NAME }}-${{ github.sha }}
+            type=raw,value=${{ env.BRANCH_NAME }}-${{ github.event.commit_id }}
           labels: |
             org.opencontainers.image.title="noelTexturesPy"
             org.opencontainers.image.description="Dash app to generate texture maps from MRI using Advanced Normalization Tools"
