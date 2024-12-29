@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=75", "setuptools_scm[toml]>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noelTexturesPy"
+description = "Dash app to generate textures maps from MRI"
+readme = "README.md"
+authors = [
+    { name = "NOEL-MNI", email = "ravnoor.gill@mcgill.ca" }
+]
+keywords = ["MRI", "texture maps", "ANTsPy", "Dash"]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+requires-python = ">=3.9"
+dynamic = ["version"]
+
+dependencies = [
+    "dash",
+    "dash-bootstrap-components",
+    "dash-html-components",
+    "flask",
+    "antspyx>=0.4.2",
+    "antspynet>=0.2.9",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "Pillow"
+]
+
+[project.urls]
+Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
+Documentation = "https://noel-mni.github.io/noelTexturesPy"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+textures_app = "noelTexturesPy.app:run_server"
+textures_app-debug = "noelTexturesPy.app:run_debug_server"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["noelTexturesPy*"]
+exclude = ["web*", "docker*", "images*", "templates*", "docs*", "build*", ".pixi*", ".github*"]
+
+[tool.setuptools_scm]
+write_to = "src/noelTexturesPy/_version.py"
+version_scheme = "no-guess-dev"
+
+[tool.ruff.format]
+quote-style = 'single'
+
+[tool.ruff.lint]
+preview = true
+select = [
+    "B",
+    "E",
+    "F",
+    "I",
+    "W",
+]
+ignore = [
+    "E203",
+    "E501",
+    "N813",
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.mypy]
+pretty = true
+
+[[tool.mypy.overrides]]
+module = "dash_bootstrap_components.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "dash.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ants.*"
+ignore_missing_imports = true

@@ -1,0 +1,19 @@
+# use unpinned version for micromamba install 
+# for docker deployment
+name: noelTexturesPy
+channels:
+  - conda-forge
+  - plotly
+dependencies:
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - Pillow
+  - chart-studio
+  - dash
+  - dash-bootstrap-components
+  - dash-html-components
+  - flask
+  - pyyaml
+  - webcolors
