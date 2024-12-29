@@ -46,7 +46,7 @@ jobs:
           images: noelmni/pynoel-gui-app
           tags: |
             # dynamically set the branch name as a prefix/suffix
-            type=raw,value=${{ env.BRANCH_NAME }}-${{ env.BASE_SHORT_SHA_TAG }}
+            type=raw,value=${{ env.BRANCH_NAME }}-${{ github.event.commit_id }}
 
       - name: Setup Python to build app wheel for Docker image
         uses: actions/setup-python@v5
@@ -71,6 +71,6 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
