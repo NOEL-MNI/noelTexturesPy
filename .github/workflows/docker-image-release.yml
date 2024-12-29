@@ -1,12 +1,13 @@
 name: Publish Docker image
 
 on:
-  push:
-    branches:
-      - 'master'
   # trigger on release
   release:
     types: [released]
+  # trigger on tags with version
+  push:
+    tags:
+      - 'v*'
   # manual trigger: 'Actions' -> 'Manually trigger a workflow' in your repository
   workflow_dispatch:
     inputs:
