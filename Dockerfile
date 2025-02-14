@@ -22,6 +22,7 @@ RUN bash tests/run_tests.sh
 FROM mambaorg/micromamba:2-debian12-slim
 ENV TZ=America/Montreal
 COPY --from=builder /opt/conda /opt/conda
+COPY --from=builder /usr/local/src/templates /usr/local/src/templates
 USER $MAMBA_USER
 
 WORKDIR /usr/local/src
