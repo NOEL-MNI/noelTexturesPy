@@ -52,6 +52,7 @@ jobs:
           images: noelmni/pynoel-gui-app
           tags: |
             type=semver,pattern={{version}}
+            type=semver,pattern=v{{version}}
             type=sha,prefix=${{ env.BRANCH_NAME }}-
             type=raw,value=${{ env.BRANCH_NAME }}-latest
             type=raw,value=latest
