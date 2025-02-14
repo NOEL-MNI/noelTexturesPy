@@ -1,5 +1,9 @@
 version: "3.9"
 
+networks:
+  pynoel:
+    name: pynoel
+
 services:
   pynoel-gui-app:
     build:
