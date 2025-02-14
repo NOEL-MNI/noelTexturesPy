@@ -1,11 +1,9 @@
-version: "3.9"
-
 networks:
-  pynoel:
-    name: pynoel
+  textures-app:
+    name: textures-app
 
 services:
-  pynoel-gui-app:
+  textures-app:
     build:
       context: .
     image: noelmni/pynoel-gui-app:latest
@@ -25,4 +23,4 @@ services:
     volumes:
       - "./io:/data"
     networks:
-      pynoel:
+      textures-app:
