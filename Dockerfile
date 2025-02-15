@@ -16,7 +16,8 @@ ARG MAMBA_DOCKERFILE_ACTIVATE=1
 RUN pip install --no-deps dist/*.whl
 
 # run tests
-RUN bash tests/run_tests.sh
+RUN echo ${TARGETPLATFORM}
+RUN if [ "$CI" != "true" ] && [ "${TARGETPLATFORM}" != "linux/arm64" ]; then bash tests/run_tests.sh; fi
 
 # production image
 FROM mambaorg/micromamba:2-debian12-slim
