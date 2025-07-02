@@ -5,6 +5,7 @@ import glob
 import logging
 import os
 import sys
+import tempfile
 from urllib.parse import quote as urlquote
 
 import dash_bootstrap_components as dbc
@@ -27,7 +28,10 @@ from noelTexturesPy.layout import jumbotron
 template = os.path.join('./templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
 TEMPDIR = os.environ.get('TEMPDIR')
-assert TEMPDIR is not None
+if TEMPDIR is None:
+    TEMPDIR = tempfile.mkdtemp(prefix='noelTexturesPy_')
+    print(f'TEMPDIR not set, using temporary directory: {TEMPDIR}')
+
 output_dir = os.path.join(TEMPDIR, 'outputs')
 upload_directory = os.path.join(TEMPDIR, 'uploads')
 
