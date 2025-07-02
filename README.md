@@ -12,7 +12,34 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 
 
 ## Prerequisites
-- [Docker](https://www.docker.com/get-started)
+- [Docker](https://www.docker.com/get-started) (for Docker installation)
+- [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) (for local installation)
+
+### Installing Micromamba
+```bash
+# Linux/macOS
+mkdir -p ~/bin
+# Download micromamba binary on Linux
+curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj ~/bin/micromamba
+# Download micromamba binary on macOS
+# For Intel Macs (osx-64)
+curl -Ls https://micro.mamba.pm/api/micromamba/osx-64/latest | tar -xvj ~/bin/micromamba
+# For Apple Silicon Macs (osx-arm64)
+curl -Ls https://micro.mamba.pm/api/micromamba/osx-arm64/latest | tar -xvj ~/bin/micromamba
+
+# Add micromamba to your PATH
+export PATH=~/bin:$PATH
+echo 'export PATH=~/bin:$PATH' >> ~/.bashrc
+# Initialize micromamba shell
+mkdir -p ~/micromamba
+export MAMBA_ROOT_PREFIX=~/micromamba
+echo 'export MAMBA_ROOT_PREFIX=~/micromamba' >> ~/.bashrc
+eval "$(micromamba shell hook -s posix)"
+
+# Or using package managers:
+# Homebrew (macOS): brew install micromamba
+# Conda-forge: conda install -c conda-forge micromamba
+```
 
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
@@ -27,8 +54,33 @@ docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
 ```
 Access the Web UI at http://localhost:9999
 
+## Local Installation with Micromamba
+For local development and usage, you can install the app using micromamba:
+
+```bash
+# Clone the repository
+git clone https://github.com/NOEL-MNI/noelTexturesPy.git
+cd noelTexturesPy
+
+# Create conda environment from lock file
+micromamba create --name pytextures --file conda-lock.yml --yes
+# conda create --name pytextures --file conda-lock.yml --yes
+
+# Activate the environment
+micromamba activate pytextures
+# conda activate pytextures
+
+# Install the package in editable mode
+pip install -editable .
+
+# Run the application
+textures_app --port 9999
+```
+
+Access the Web UI at http://localhost:9999
+
 ## Build the app
-#### M1 Apple Silicon supported/tested, M2 untested as of 21-02-2023 (but will likely work without issues)
+#### M1 Apple Silicon supported/tested, M2, M3, M4 untested as of 01-July-2025 (but will likely work without issues)
 ```bash
 git clone https://github.com/NOEL-MNI/noelTexturesPy.git
 cd noelTexturesPy
