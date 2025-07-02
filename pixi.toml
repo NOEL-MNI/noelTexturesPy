@@ -41,6 +41,9 @@ platforms = ["linux-64", "linux-aarch64"]
 [feature.dev.pypi-dependencies]
 datalad = "*"
 
+[feature.dev.dependencies]
+pre-commit = ">=4.2.0,<5"
+
 [environments]
 dev = {features = ["ants", "dev"], solve-group = "docker-group"}
 default = {features = ["ants"], solve-group = "docker-group"}
