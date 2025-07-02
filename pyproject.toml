@@ -40,8 +40,7 @@ Documentation = "https://noel-mni.github.io/noelTexturesPy"
 dev = ["pytest"]
 
 [project.scripts]
-textures_app = "noelTexturesPy.app:run_server"
-textures_app-debug = "noelTexturesPy.app:run_debug_server"
+textures_app = "noelTexturesPy.app:main"
 
 [tool.setuptools]
 include-package-data = false
