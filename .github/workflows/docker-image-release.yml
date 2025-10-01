@@ -62,7 +62,7 @@ jobs:
             org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"
 
       - name: Set up Python to build app wheel for Docker image
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
