@@ -24,7 +24,7 @@ def custom_logger():
             with open(log_filename, 'w'):
                 pass  # create a new empty file
     except OSError as e:
-        print('error: %s - %s.' % (e.filename, e.strerror))
+        print(f'error: {e.filename} - {e.strerror}.')
 
     handler = logging.FileHandler(log_filename)
     handler.setLevel(logging.INFO)
