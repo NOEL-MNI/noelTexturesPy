@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["Ravnoor Gill <ravnoor.gill@mcgill.ca>"]
 channels = ["conda-forge"]
 description = "Plotly Dash app to generate textures maps from MRI"
