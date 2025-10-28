@@ -53,7 +53,6 @@ pre-commit = ">=4.2.0,<5"
 pytest = ">=8.4.1, <9"
 pyprojroot = ">=0.3.0, <0.4"
 
-
 [environments]
 dev = {features = ["ants", "dev", "test"], solve-group = "docker-group"}
 default = {features = ["ants"], solve-group = "docker-group"}
