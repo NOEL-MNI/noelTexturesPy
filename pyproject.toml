@@ -7,7 +7,7 @@ name = "noelTexturesPy"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
 authors = [
-    { name = "NOEL-MNI", email = "ravnoor.gill@mcgill.ca" }
+    { name = "NOEL-MNI", email = "ravnoor.gill@mail.mcgill.ca" }
 ]
 keywords = ["MRI", "texture maps", "ANTsPy", "Dash"]
 license = { file = "LICENSE" }
