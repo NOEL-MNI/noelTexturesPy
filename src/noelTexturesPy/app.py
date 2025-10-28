@@ -124,7 +124,7 @@ def update_output(
     """Save uploaded files and regenerate the file list."""
 
     if uploaded_filenames is not None and uploaded_file_contents is not None:
-        for name, data in zip(uploaded_filenames, uploaded_file_contents):
+        for name, data in zip(uploaded_filenames, uploaded_file_contents, strict=True):
             save_file(name, data)
 
     files = uploaded_files()
