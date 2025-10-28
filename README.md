@@ -14,6 +14,7 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 ## Prerequisites
 - [Docker](https://www.docker.com/get-started) (for Docker installation)
 - [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) (for local installation)
+- [Pixi](https://pixi.sh) (for pixi-based installation)
 
 ### Installing Micromamba
 ```bash
@@ -41,6 +42,21 @@ eval "$(micromamba shell hook -s posix)"
 # Conda-forge: conda install -c conda-forge micromamba
 ```
 
+### Installing Pixi
+```bash
+# Linux/macOS (recommended method)
+curl -fsSL https://pixi.sh/install.sh | bash
+
+# Alternative methods:
+# Homebrew (macOS): brew install pixi
+# Conda-forge: conda install -c conda-forge pixi
+# Windows (PowerShell): iwr -useb https://pixi.sh/install.ps1 | iex
+
+# Add pixi to your PATH (if not automatically added)
+export PATH="$HOME/.pixi/bin:$PATH"
+echo 'export PATH="$HOME/.pixi/bin:$PATH"' >> ~/.bashrc
+```
+
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
 ![Usage noelTexturesPy GIF](images/textures.gif)
@@ -53,6 +69,29 @@ docker pull noelmni/pynoel-gui-app:latest
 docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
 ```
 Access the Web UI at http://localhost:9999
+
+## Local Installation with Pixi
+For local development using pixi (modern conda-compatible package manager):
+
+```bash
+# Clone the repository
+git clone https://github.com/NOEL-MNI/noelTexturesPy.git
+cd noelTexturesPy
+
+# Install dependencies and create environment using pixi
+pixi install
+
+# Run the application
+pixi run textures_app
+
+# Or with custom port
+pixi run textures_app --port 9988
+
+# Or in debug mode
+pixi run textures_app --debug --port 9988
+```
+
+Access the Web UI at http://localhost:9999 (or your specified port)
 
 ## Local Installation with Micromamba
 For local development and usage, you can install the app using micromamba:
