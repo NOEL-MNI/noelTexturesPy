@@ -53,7 +53,7 @@ jobs:
       - name: Add .pixi/envs/default/bin to the $PATH
         shell: bash
         run: |
-          echo "$(pwd)/.pixi/envs/default/bin" >> $GITHUB_PATH
+          echo "$(pwd)/.pixi/envs/build-ants/bin" >> $GITHUB_PATH
 
       - name: Build individual packages
         shell: bash
