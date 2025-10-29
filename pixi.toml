@@ -3,7 +3,7 @@ authors = ["Ravnoor Gill <ravnoor.gill@mcgill.ca>"]
 channels = ["conda-forge"]
 description = "Plotly Dash app to generate textures maps from MRI"
 name = "noelTexturesPy"
-platforms = ["linux-64", "osx-arm64"]
+platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
 version = "0.2.2"
 
 [tasks]
