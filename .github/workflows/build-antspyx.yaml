@@ -5,6 +5,8 @@ on:
     branches:
       - master
       - dev
+      - 'feature/build*'
+      - 'build/*'
   workflow_dispatch:
   pull_request:
     branches:
