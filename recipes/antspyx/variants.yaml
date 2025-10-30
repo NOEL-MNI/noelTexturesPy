@@ -1,4 +1,4 @@
-# channel_sources: conda-forge,minc-forge
+channel_sources: https://prefix.dev/noel-forge,conda-forge
 c_stdlib:
   - if: linux
     then:
