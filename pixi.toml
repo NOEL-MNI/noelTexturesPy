@@ -19,7 +19,7 @@ depends-on = [
 
 [dependencies]
 numpy = ">=1.26.4,<2"
-scipy = "<1.16,<2"
+scipy = "<1.16"
 pandas = ">=2.2.3,<3"
 matplotlib = ">=3.9.2,<4"
 pillow = ">=11.0.0,<12"
@@ -35,15 +35,12 @@ dash-bootstrap-components = ">=1.6.0,<2"
 dash-html-components = ">=2.0.0,<3"
 chart-studio = ">=1.1.0,<2"
 
-[feature.ants.pypi-dependencies]
-antspyx = ">=0.5.4,<1"
-antspynet = ">=0.2.9,<1"
+[feature.ants]
+channels = ["https://repo.prefix.dev/noel-forge"]
+dependencies = { antspyx = ">=0.6.2", antspynet = ">=0.3.1" }
 
 [feature.build-ants.dependencies]
 rattler-build = ">=0.49.0,<1"
-
-[feature.docker]
-platforms = ["linux-64", "linux-aarch64"]
 
 [feature.dev.pypi-dependencies]
 datalad = "*"
@@ -57,6 +54,5 @@ pyprojroot = ">=0.3.0, <0.4"
 
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
-dev = {features = ["ants", "dev", "test"], solve-group = "docker-group"}
-default = {features = ["ants"], solve-group = "docker-group"}
-docker = {features = ["docker"], solve-group = "docker-group"}
+dev = {features = ["ants", "dev", "test"]}
+default = {features = ["ants"]}
