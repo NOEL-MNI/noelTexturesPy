@@ -6197,9 +6197,9 @@ packages:
   size: 34574
   timestamp: 1734112236147
 - pypi: ./
-  name: noeltexturespy
-  version: 0.2.2.post1.dev38+gf1534ccad.d20251030
-  sha256: 60f443734da789909a2df6e0717c7f5375f856aa9cf6b18ec16afd4b400bf4de
+  name: noel-textures-py
+  version: 0.2.2.post1.dev42+gce5398178.d20251030
+  sha256: 7ee73b650f908dcc972ce9016444f61fcdaeef8f65ea6cbcb9fd5fd9b57ab16b
   requires_dist:
   - dash
   - dash-bootstrap-components
