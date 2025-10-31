@@ -61,9 +61,7 @@ jobs:
           rattler-build build --continue-on-failure \
             --recipe-dir ./recipes  \
             ${{ matrix.build-args }}  \
-            --package-format conda:22 \
-            --channel conda-forge \
-            --channel https://repo.prefix.dev/noel-forge
+            --package-format conda:22
 
       - name: Upload package
         shell: bash
