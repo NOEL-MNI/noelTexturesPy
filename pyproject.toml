@@ -91,3 +91,7 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "ants.*"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "antspynet.*"
+ignore_missing_imports = true
