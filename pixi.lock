@@ -6198,8 +6198,8 @@ packages:
   timestamp: 1734112236147
 - pypi: ./
   name: noel-textures-py
-  version: 0.2.2.post1.dev42+gce5398178.d20251030
-  sha256: 7ee73b650f908dcc972ce9016444f61fcdaeef8f65ea6cbcb9fd5fd9b57ab16b
+  version: 0.2.2.post1.dev48+g6457e2f6b.d20251031
+  sha256: d72cc0fef35d6e46396d14c4c5cfca9eb27dcadc39a17abfaf603c288b0bb640
   requires_dist:
   - dash
   - dash-bootstrap-components
