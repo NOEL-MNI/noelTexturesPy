@@ -39,6 +39,7 @@ scripts.textures_app = "noelTexturesPy.app:main"
 
 [dependency-groups]
 dev = [
+  "mypy",
   "pytest",
 ]
 ants = [
