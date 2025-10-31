@@ -1,4 +1,5 @@
 import dash_bootstrap_components as dbc
+from ants import __version__ as ants_version
 from dash import dcc
 from dash import html
 
@@ -87,7 +88,7 @@ body = dbc.Container(
                         ),
                         # add version information
                         html.Footer(
-                            f'Version: {app_version}',
+                            f'Version: {app_version}, ANTsPy Version: {ants_version}',
                             style={
                                 'position': 'fixed',
                                 'bottom': '10px',

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import argparse
 import base64
 import glob
 import logging
 import os
 import sys
+import tempfile
 from urllib.parse import quote as urlquote
 
 import dash_bootstrap_components as dbc
@@ -27,7 +29,10 @@ from noelTexturesPy.layout import jumbotron
 template = os.path.join('./templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
 TEMPDIR = os.environ.get('TEMPDIR')
-assert TEMPDIR is not None
+if TEMPDIR is None:
+    TEMPDIR = tempfile.mkdtemp(prefix='noelTexturesPy_')
+    print(f'TEMPDIR not set, using temporary directory: {TEMPDIR}')
+
 output_dir = os.path.join(TEMPDIR, 'outputs')
 upload_directory = os.path.join(TEMPDIR, 'uploads')
 
@@ -119,7 +124,7 @@ def update_output(
     """Save uploaded files and regenerate the file list."""
 
     if uploaded_filenames is not None and uploaded_file_contents is not None:
-        for name, data in zip(uploaded_filenames, uploaded_file_contents):
+        for name, data in zip(uploaded_filenames, uploaded_file_contents, strict=True):
             save_file(name, data)
 
     files = uploaded_files()
@@ -216,13 +221,31 @@ def update_console(n):
     return data
 
 
-def run_server():
-    app.run_server(host='0.0.0.0', debug=False, port=9999)
+def serve(port=9999, debug=False):
+    """Run the Dash server."""
+    if debug:
+        logger.info(f'Starting server in debug mode on port {port}')
+    else:
+        logger.info(f'Starting server on port {port}')
+    logger.info(f'Output directory: {output_dir}')
+    app.run_server(host='0.0.0.0', debug=debug, port=port)
 
 
-def run_debug_server():
-    app.run_server(host='0.0.0.0', debug=True, port=9999)
+def main():
+    parser = argparse.ArgumentParser(description='Run noelTexturesPy application')
+    parser.add_argument(
+        '--port',
+        type=int,
+        default=9999,
+        help='Port number to run the server on (default: 9999)',
+    )
+    parser.add_argument(
+        '--debug', action='store_true', help='Run the server in debug mode'
+    )
+    args = parser.parse_args()
+
+    serve(port=args.port, debug=args.debug)
 
 
 if __name__ == '__main__':
-    run_server()
+    main()

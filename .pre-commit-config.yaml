@@ -2,7 +2,7 @@
 # see https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast                  # simply check whether the files parse as valid python
       - id: check-case-conflict        # check for files that would conflict in case-insensitive filesystems
@@ -17,9 +17,12 @@ repos:
       - id: trailing-whitespace        # trims trailing whitespace
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.6
+    rev: v0.14.2
     hooks:
-      - id: ruff
+      # run the linter
+      - id: ruff-check
+        args: [ --fix ]
+      # run the formatter
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/pygrep-hooks
@@ -34,13 +37,13 @@ repos:
       - id: rst-inline-touching-normal        # detect mistake of inline code touching normal text in rst
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.21.0
     hooks:
       - id: pyupgrade
-        args: ['--py39-plus', '--keep-runtime-typing']
+        args: ['--py312-plus', '--keep-runtime-typing']
 
   - repo: https://github.com/PyCQA/doc8
-    rev: v1.1.2
+    rev: v2.0.0
     hooks:
     - id: doc8
 

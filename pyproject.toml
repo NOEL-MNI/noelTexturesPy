@@ -7,7 +7,7 @@ name = "noelTexturesPy"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
 authors = [
-    { name = "NOEL-MNI", email = "ravnoor.gill@mcgill.ca" }
+    { name = "NOEL-MNI", email = "ravnoor.gill@mail.mcgill.ca" }
 ]
 keywords = ["MRI", "texture maps", "ANTsPy", "Dash"]
 license = { file = "LICENSE" }
@@ -16,7 +16,7 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dynamic = ["version"]
 
 dependencies = [
@@ -40,8 +40,7 @@ Documentation = "https://noel-mni.github.io/noelTexturesPy"
 dev = ["pytest"]
 
 [project.scripts]
-textures_app = "noelTexturesPy.app:run_server"
-textures_app-debug = "noelTexturesPy.app:run_debug_server"
+textures_app = "noelTexturesPy.app:main"
 
 [tool.setuptools]
 include-package-data = false
@@ -53,6 +52,7 @@ exclude = ["web*", "docker*", "images*", "templates*", "docs*", "build*", ".pixi
 
 [tool.setuptools_scm]
 write_to = "src/noelTexturesPy/_version.py"
+fallback_version = "0.2.2"
 version_scheme = "no-guess-dev"
 
 [tool.ruff.format]
