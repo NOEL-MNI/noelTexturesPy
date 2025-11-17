@@ -52,7 +52,7 @@ requirements:
     - python
     - pandas
     - pyyaml
-    - numpy <=2.0.1
+    - numpy >=1.19.2
     - statsmodels
     - webcolors
     - matplotlib-base
