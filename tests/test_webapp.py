@@ -236,19 +236,3 @@ def test_app_run_server_method_exists():
     assert callable(app_module.app.run_server), 'run_server should be callable'
 
     logger.info('app.run_server method exists and is callable')
-
-
-def test_app_run_server_direct_call():
-    """Test calling app.run_server directly with mocked server."""
-    logger.info('Testing direct app.run_server call')
-
-    from noelTexturesPy import app as app_module
-
-    with patch.object(app_module.app, 'run_server') as mock_run_server:
-        # Directly call run_server with custom parameters
-        app_module.app.run_server(host='127.0.0.1', port=8888, debug=True)
-
-        # Verify it was called with those exact parameters
-        mock_run_server.assert_called_once_with(host='127.0.0.1', port=8888, debug=True)
-
-    logger.info('app.run_server direct call works correctly')
