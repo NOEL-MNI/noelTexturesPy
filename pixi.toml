@@ -10,7 +10,10 @@ version = "0.2.2"
 app = { cmd = "python3 src/noelTexturesPy/app.py" }
 fmt = "ruff"
 lint = "pylint"
-test = { cmd = "python -m pytest tests/test_noelTexturesPy.py -v" }
+test = { cmd = "python -m pytest tests/ -v" }
+test-unit = { cmd = "python -m pytest tests/test_noelTexturesPy.py -v" }
+test-webapp = { cmd = "python -m pytest tests/test_webapp.py -v" }
+test-all = { cmd = "bash tests/run_tests.sh" }
 
 [tasks.test-app]
 depends-on = [
