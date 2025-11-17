@@ -55,4 +55,4 @@ pyprojroot = ">=0.3.0, <0.4"
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
 dev = {features = ["ants", "dev", "test"]}
-default = {features = ["ants"]}
+default = {features = ["ants", "test"]}
