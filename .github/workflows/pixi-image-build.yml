@@ -1,0 +1,54 @@
+name: Test Pixi-based Docker image builds
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  docker-image-pixi:
+    name: Test Docker build using Dockerfile.pixi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v5
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Determine branch name (non-PR events)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+
+      - name: Determine branch name (PR events)
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: noelmni/textures-py
+          tags: |
+            type=raw,value=${{ env.BRANCH_NAME }}-${{ github.event.commit_id }}
+          labels: |
+            org.opencontainers.image.title="noelTexturesPy"
+            org.opencontainers.image.description="Dash app to generate texture maps from MRI using Advanced Normalization Tools"
+            org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"
+
+      - name: Build Docker image using Dockerfile.pixi (multi-arch test build)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.pixi
+          platforms: linux/amd64,linux/arm64
+          push: false  # test build only; do not push
+          build-args: |
+            SKIP_TESTS=true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -1,0 +1,26 @@
+channel_sources: https://prefix.dev/noel-forge,conda-forge
+c_stdlib:
+  - if: linux
+    then:
+    - sysroot
+  - if: osx
+    then:
+    - macosx_deployment_target
+  - if: win
+    then:
+    - vs
+
+c_stdlib_version:
+  - if: linux
+    then: 2.17
+  - if: osx and x86_64
+    then: 10.13
+  - if: osx and arm64
+    then: 11.0
+
+python:
+# note that versions are _strings_ (not numbers)
+- "3.10"
+- "3.11"
+- "3.12"
+- "3.13"

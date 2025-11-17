@@ -1,4 +1,4 @@
-FROM ghcr.io/prefix-dev/pixi:0.58.0 AS builder
+FROM ghcr.io/prefix-dev/pixi:0.59.0 AS builder
 LABEL maintainer=<ravnoor@gmail.com>
 
 # set variable for conditional test execution
@@ -36,7 +36,6 @@ ENV TZ=America/Montreal
 WORKDIR /app
 
 # only copy the production environment into prod container
-# please note that the "prefix" (path) needs to stay the same as in the build container
 COPY --from=builder /app/.pixi/envs/default /app/.pixi/envs/default
 COPY --from=builder --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
 COPY --from=builder /app/templates /app/templates

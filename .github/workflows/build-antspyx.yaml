@@ -1,0 +1,74 @@
+name: Build and Upload Conda Packages
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - 'feature/build*'
+      - 'build/*'
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+
+# trusted publishing permissions
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    name: Build package
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target-platform: linux-64
+            build-args: --target-platform linux-64
+          - os: ubuntu-24.04-arm
+            target-platform: linux-aarch64
+            build-args: --target-platform linux-aarch64
+          - os: macos-26
+            target-platform: osx-arm64
+            build-args: --target-platform osx-arm64
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - uses: prefix-dev/setup-pixi@v0.9.2
+        with:
+          pixi-version: v0.59.0
+          auth-host: prefix.dev
+          auth-token: ${{ secrets.PREFIX_API_KEY }}
+          environments: build-ants
+
+      - name: Add .pixi/envs/default/bin to the $PATH
+        shell: bash
+        run: |
+          echo "$(pwd)/.pixi/envs/build-ants/bin" >> $GITHUB_PATH
+
+      - name: Build individual packages
+        shell: bash
+        run: |
+          rattler-build build --continue-on-failure \
+            --recipe-dir ./recipes  \
+            ${{ matrix.build-args }}  \
+            --package-format conda:22
+
+      - name: Upload package
+        shell: bash
+        # do not upload on PR
+        if: github.event_name == 'push'
+        run: |
+          for pkg in output/**/*.conda; do
+            echo "Uploading ${pkg}"
+            rattler-build upload prefix -c noel-forge "${pkg}" --skip-existing
+          done
