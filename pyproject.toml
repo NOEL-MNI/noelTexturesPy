@@ -23,14 +23,14 @@ classifiers = [
 dynamic = [ "version" ]
 
 dependencies = [
-  "dash",
-  "dash-bootstrap-components",
-  "dash-html-components",
-  "flask",
-  "matplotlib",
-  "numpy",
-  "pandas",
-  "pillow",
+  "dash>=2.18.2,<3",
+  "dash-bootstrap-components>=1.6,<2",
+  "dash-html-components>=2,<3",
+  "flask>=3.0.3,<4",
+  "matplotlib>=3.9.2,<4",
+  "numpy>=1.26.4,<2",
+  "pandas>=2.2.3,<3",
+  "pillow>=11,<12",
 ]
 
 urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
@@ -40,8 +40,8 @@ scripts.textures_app = "noelTexturesPy.app:main"
 [dependency-groups]
 dev = [
   "mypy",
-  "pyprojroot",
-  "pytest",
+  "pyprojroot>=0.3,<0.4",
+  "pytest>=8.4.1,<9",
 ]
 ants = [
   "antspynet>=0.2.9",
