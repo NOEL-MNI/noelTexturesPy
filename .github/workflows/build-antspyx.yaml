@@ -30,9 +30,9 @@ jobs:
           - os: ubuntu-24.04-arm
             target-platform: linux-aarch64
             build-args: --target-platform linux-aarch64
-          - os: macos-26
-            target-platform: osx-arm64
-            build-args: --target-platform osx-arm64
+          # - os: macos-26
+          #   target-platform: osx-arm64
+          #   build-args: --target-platform osx-arm64
 
     permissions:
       id-token: write
