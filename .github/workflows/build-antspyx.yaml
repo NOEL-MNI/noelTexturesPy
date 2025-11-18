@@ -33,6 +33,9 @@ jobs:
           # - os: macos-26
           #   target-platform: osx-arm64
           #   build-args: --target-platform osx-arm64
+          - os: ubuntu-latest
+            target-platform: linux-64
+            build-args: --target-platform linux-64 --ignore-recipe-variants --variant python=3.14 -https://prefix.dev/noel-forge -c conda-forge
 
     permissions:
       id-token: write
