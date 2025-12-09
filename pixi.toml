@@ -52,7 +52,7 @@ datalad = "*"
 pre-commit = ">=4.2.0,<5"
 
 [feature.test.pypi-dependencies]
-pytest = ">=8.4.1, <9"
+pytest = ">=9.0.2, <10"
 pyprojroot = ">=0.3.0, <0.4"
 
 [environments]

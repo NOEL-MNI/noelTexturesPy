@@ -41,7 +41,7 @@ scripts.textures_app = "noelTexturesPy.app:main"
 dev = [
   "mypy",
   "pyprojroot>=0.3,<0.4",
-  "pytest>=8.4.1,<9",
+  "pytest>=9.0.2,<10",
 ]
 ants = [
   "antspynet>=0.2.9",
