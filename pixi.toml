@@ -55,7 +55,11 @@ pre-commit = ">=4.2.0,<5"
 pytest = ">=9.0.2, <10"
 pyprojroot = ">=0.3.0, <0.4"
 
+[feature.py312.dependencies]
+python = "3.12.*"
+
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
 dev = {features = ["ants", "dev", "test"]}
 default = {features = ["ants", "test"]}
+py312 = {features = ["ants", "test", "py312"], solve-group = "py312"}
