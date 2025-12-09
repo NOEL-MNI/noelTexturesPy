@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
+      - dev
       - tests/**
+      - pixi-dev
   pull_request:
 
 env:
