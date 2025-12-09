@@ -7,6 +7,7 @@ on:
       - dev
       - 'feature/build*'
       - 'build/*'
+      - pixi-dev
   workflow_dispatch:
   pull_request:
     branches:
