@@ -23,8 +23,8 @@ classifiers = [
 dynamic = [ "version" ]
 
 dependencies = [
-  "dash>=2.18.2,<3",
-  "dash-bootstrap-components>=1.6,<2",
+  "dash>=3.3,<4",
+  "dash-bootstrap-components>=2.0.4,<3",
   "dash-html-components>=2,<3",
   "flask>=3.0.3,<4",
   "matplotlib>=3.9.2,<4",
