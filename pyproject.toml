@@ -80,8 +80,11 @@ lint.isort.force-single-line = true
 lint.preview = true
 
 [tool.pytest.ini_options]
-addopts = [ "-n", "auto", "-v" ]
+addopts = [ "-v" ]
 testpaths = [ "tests" ]
+markers = [
+  "e2e: Dash end-to-end tests (requires Chromium + chromedriver)",
+]
 
 [tool.mypy]
 pretty = true
