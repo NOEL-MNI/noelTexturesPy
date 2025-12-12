@@ -166,73 +166,73 @@ def test_main_custom_port_and_debug():
 
 
 def test_serve_default_parameters():
-    """Test that serve() function calls app.run_server with default parameters."""
+    """Test that serve() function calls app.run with default parameters."""
     logger.info('Testing serve() with default parameters')
 
     from noelTexturesPy import app as app_module
 
-    with patch.object(app_module.app, 'run_server') as mock_run_server:
+    with patch.object(app_module.app, 'run') as mock_run:
         app_module.serve()
 
-        # Verify run_server was called with default values
-        mock_run_server.assert_called_once_with(host='0.0.0.0', debug=False, port=9999)
+        # Verify run was called with default values
+        mock_run.assert_called_once_with(host='0.0.0.0', debug=False, port=9999)
 
     logger.info('serve() correctly uses default parameters')
 
 
 def test_serve_custom_port():
-    """Test that serve() function calls app.run_server with custom port."""
+    """Test that serve() function calls app.run with custom port."""
     logger.info('Testing serve() with custom port')
 
     from noelTexturesPy import app as app_module
 
-    with patch.object(app_module.app, 'run_server') as mock_run_server:
+    with patch.object(app_module.app, 'run') as mock_run:
         app_module.serve(port=8080)
 
-        # Verify run_server was called with custom port
-        mock_run_server.assert_called_once_with(host='0.0.0.0', debug=False, port=8080)
+        # Verify run was called with custom port
+        mock_run.assert_called_once_with(host='0.0.0.0', debug=False, port=8080)
 
     logger.info('serve() correctly handles custom port')
 
 
 def test_serve_debug_mode():
-    """Test that serve() function calls app.run_server with debug mode enabled."""
+    """Test that serve() function calls app.run with debug mode enabled."""
     logger.info('Testing serve() with debug mode')
 
     from noelTexturesPy import app as app_module
 
-    with patch.object(app_module.app, 'run_server') as mock_run_server:
+    with patch.object(app_module.app, 'run') as mock_run:
         app_module.serve(debug=True)
 
-        # Verify run_server was called with debug=True
-        mock_run_server.assert_called_once_with(host='0.0.0.0', debug=True, port=9999)
+        # Verify run was called with debug=True
+        mock_run.assert_called_once_with(host='0.0.0.0', debug=True, port=9999)
 
     logger.info('serve() correctly handles debug mode')
 
 
 def test_serve_custom_port_and_debug():
-    """Test that serve() function calls app.run_server with both custom parameters."""
+    """Test that serve() function calls app.run with both custom parameters."""
     logger.info('Testing serve() with custom port and debug mode')
 
     from noelTexturesPy import app as app_module
 
-    with patch.object(app_module.app, 'run_server') as mock_run_server:
+    with patch.object(app_module.app, 'run') as mock_run:
         app_module.serve(port=5000, debug=True)
 
-        # Verify run_server was called with both custom values
-        mock_run_server.assert_called_once_with(host='0.0.0.0', debug=True, port=5000)
+        # Verify run was called with both custom values
+        mock_run.assert_called_once_with(host='0.0.0.0', debug=True, port=5000)
 
     logger.info('serve() correctly handles custom port and debug mode')
 
 
-def test_app_run_server_method_exists():
-    """Test that the app object has the run_server method."""
-    logger.info('Testing app.run_server method exists')
+def test_app_run_method_exists():
+    """Test that the app object exposes the Dash run method."""
+    logger.info('Testing app.run method exists')
 
     from noelTexturesPy import app as app_module
 
-    # Verify the app has run_server method
-    assert hasattr(app_module.app, 'run_server'), 'App should have run_server method'
-    assert callable(app_module.app.run_server), 'run_server should be callable'
+    # Verify the app has run method (Dash >= 3)
+    assert hasattr(app_module.app, 'run'), 'App should have run method'
+    assert callable(app_module.app.run), 'run should be callable'
 
-    logger.info('app.run_server method exists and is callable')
+    logger.info('app.run method exists and is callable')

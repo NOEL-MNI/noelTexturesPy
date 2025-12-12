@@ -228,7 +228,16 @@ def serve(port=9999, debug=False):
     else:
         logger.info(f'Starting server on port {port}')
     logger.info(f'Output directory: {output_dir}')
-    app.run_server(host='0.0.0.0', debug=debug, port=port)
+    # Dash 3 replaced run_server with run; run still accepts the same kwargs.
+    run_kwargs = {
+        'host': '0.0.0.0',
+        'debug': debug,
+        'port': port,
+    }
+    if hasattr(app, 'run'):
+        app.run(**run_kwargs)
+    else:
+        app.run_server(**run_kwargs)
 
 
 def main():
