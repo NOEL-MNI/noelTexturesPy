@@ -3,12 +3,14 @@ import random
 import string
 from collections import Counter
 
-import ants
 import numpy as np
 
 
 def write_nifti(input, id, output_dir, type):
     output_fname = os.path.join(output_dir, id + '_' + type + '.nii.gz')
+    from noelTexturesPy.optional_deps import get_ants
+
+    ants = get_ants()
     ants.image_write(input, output_fname)
 
 

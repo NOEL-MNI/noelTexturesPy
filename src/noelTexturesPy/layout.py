@@ -1,9 +1,10 @@
 import dash_bootstrap_components as dbc
-from ants import __version__ as ants_version
 from dash import dcc
 from dash import html
 
 from noelTexturesPy import __version__ as app_version
+from noelTexturesPy.optional_deps import ants_version_string
+from noelTexturesPy.optional_deps import is_ants_available
 
 jumbotron = html.Div(
     dbc.Container(
@@ -32,38 +33,57 @@ body = dbc.Container(
                         ),
                         html.Br(),
                         html.P(id='case-id-output', style={'display': 'none'}),
-                        html.H2('Upload'),
-                        dcc.Upload(
-                            id='upload-data',
-                            children=html.Div(
-                                ['Drag and drop or click to select a file to upload.']
-                            ),
-                            style={
-                                'width': '100%',
-                                'height': '10%',
-                                'lineHeight': '60px',
-                                'borderWidth': '1px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '5px',
-                                'textAlign': 'center',
-                                'margin': '10px',
-                            },
-                            multiple=True,
-                        ),
-                        html.H2('Texture Maps'),
-                        html.Ul(
-                            id='file-list',
-                            style={
-                                'width': '100%',
-                                'height': '50%',
-                                'lineHeight': '60px',
-                                'borderWidth': '1px',
-                                'borderStyle': 'dashed',
-                                'borderRadius': '5px',
-                                'textAlign': 'center',
-                                'margin': '10px',
-                                'margin-top': '10px',
-                            },
+                        (
+                            html.Div(
+                                [
+                                    html.H2('Upload'),
+                                    dcc.Upload(
+                                        id='upload-data',
+                                        children=html.Div(
+                                            [
+                                                'Drag and drop or click to select a file to upload.'
+                                            ]
+                                        ),
+                                        style={
+                                            'width': '100%',
+                                            'height': '10%',
+                                            'lineHeight': '60px',
+                                            'borderWidth': '1px',
+                                            'borderStyle': 'dashed',
+                                            'borderRadius': '5px',
+                                            'textAlign': 'center',
+                                            'margin': '10px',
+                                        },
+                                        multiple=True,
+                                    ),
+                                    html.H2('Texture Maps'),
+                                    html.Ul(
+                                        id='file-list',
+                                        style={
+                                            'width': '100%',
+                                            'height': '50%',
+                                            'lineHeight': '60px',
+                                            'borderWidth': '1px',
+                                            'borderStyle': 'dashed',
+                                            'borderRadius': '5px',
+                                            'textAlign': 'center',
+                                            'margin': '10px',
+                                            'margin-top': '10px',
+                                        },
+                                    ),
+                                ]
+                            )
+                            if is_ants_available()
+                            else html.Div(
+                                [
+                                    html.H4('Processing disabled'),
+                                    html.P(
+                                        'Install ANTs/ANTsPyNet dependencies to enable uploads and processing.'
+                                    ),
+                                ],
+                                id='ants-missing-banner',
+                                style={'margin': '10px'},
+                            )
                         ),
                         dcc.Interval(
                             id='interval1', interval=1.000 * 1000, n_intervals=0
@@ -88,7 +108,7 @@ body = dbc.Container(
                         ),
                         # add version information
                         html.Footer(
-                            f'Version: {app_version}, ANTsPy Version: {ants_version}',
+                            f'Version: {app_version}, ANTsPy Version: {ants_version_string()}',
                             style={
                                 'position': 'fixed',
                                 'bottom': '10px',

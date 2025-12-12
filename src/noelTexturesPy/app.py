@@ -19,12 +19,11 @@ from dash import html
 from flask import Flask
 from flask import send_from_directory
 
-from noelTexturesPy.image_processing import case_id as random_case_id
-from noelTexturesPy.image_processing import log_filename
-from noelTexturesPy.image_processing import logger
-from noelTexturesPy.image_processing import noelTexturesPy
+from noelTexturesPy.custom_logging import custom_logger
 from noelTexturesPy.layout import body
 from noelTexturesPy.layout import jumbotron
+from noelTexturesPy.optional_deps import is_ants_available
+from noelTexturesPy.utils import random_case_id
 
 template = os.path.join('./templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz')
 
@@ -33,12 +32,19 @@ if TEMPDIR is None:
     TEMPDIR = tempfile.mkdtemp(prefix='noelTexturesPy_')
     print(f'TEMPDIR not set, using temporary directory: {TEMPDIR}')
 
+# Ensure downstream helpers see the same temp directory.
+os.environ['TEMPDIR'] = TEMPDIR
+
 output_dir = os.path.join(TEMPDIR, 'outputs')
 upload_directory = os.path.join(TEMPDIR, 'uploads')
 
-if not os.path.exists(upload_directory):
-    os.makedirs(upload_directory)
-    os.makedirs(output_dir)
+os.makedirs(upload_directory, exist_ok=True)
+os.makedirs(output_dir, exist_ok=True)
+
+
+# Logger/log file are used by the live log viewer callbacks. Keep this lightweight
+# so the app can start without optional processing dependencies installed.
+logger, log_filename, _startup_case_id = custom_logger()
 
 
 # normally, Dash creates its own Flask server internally - by creating our own,
@@ -123,6 +129,17 @@ def update_output(
 ):
     """Save uploaded files and regenerate the file list."""
 
+    if not is_ants_available():
+        # Upload UI is hidden when ANTs isn't available, but keep a safe fallback
+        # in case this callback is triggered programmatically.
+        return [
+            dbc.Button(
+                'Processing is disabled (missing ANTs dependencies)',
+                color='secondary',
+                disabled=True,
+            )
+        ]
+
     if uploaded_filenames is not None and uploaded_file_contents is not None:
         for name, data in zip(uploaded_filenames, uploaded_file_contents, strict=True):
             save_file(name, data)
@@ -157,9 +174,23 @@ def update_output(
     if case_id is not None:
         logger.info(f'Case ID: {str(case_id)}')
     else:
-        case_id = random_case_id
+        case_id = random_case_id()
         logger.info('assigning randomly generated case ID')
         logger.info(f'case ID: {case_id}')
+
+    # Import processing pipeline lazily so the app can import without ANTs.
+    try:
+        from noelTexturesPy.image_processing import noelTexturesPy
+    except Exception as exc:
+        logger.exception('Unable to import processing pipeline')
+        return [
+            dbc.Button(
+                f'Processing unavailable: {exc}',
+                color='danger',
+                disabled=True,
+            )
+        ]
+
     noelTexturesPy(
         id=str(case_id),
         t1=t1,
