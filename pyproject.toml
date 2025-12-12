@@ -79,6 +79,10 @@ lint.ignore = [
 lint.isort.force-single-line = true
 lint.preview = true
 
+[tool.pytest.ini_options]
+addopts = [ "-n", "auto", "-v" ]
+testpaths = [ "tests" ]
+
 [tool.mypy]
 pretty = true
 
