@@ -7085,10 +7085,10 @@ packages:
   timestamp: 1734112236147
 - pypi: ./
   name: noel-textures-py
-  version: 0.2.2.post1.dev88+g9877565ae.d20251212
-  sha256: 88c675383885910baf5a784dcde79d6d6a1a0514caf129c1e4c36190eecc559d
+  version: 0.2.2.post1.dev91+g48ca0b5ca.d20251212
+  sha256: c8c1f74028fe040678e12051464fa4b5721cdc7af2a4c82a502f22cd7d2fd445
   requires_dist:
-  - dash>=3.3.0,<4
+  - dash>=3.3,<4
   - dash-bootstrap-components>=2.0.4,<3
   - dash-html-components>=2,<3
   - flask>=3.0.3,<4
