@@ -39,7 +39,7 @@ scripts.textures_app = "noelTexturesPy.app:main"
 
 [dependency-groups]
 dev = [
-  "mypy",
+  "mypy>=1.19,<2",
   "pyprojroot>=0.3,<0.4",
   "pytest>=9.0.2,<10",
   "pytest-xdist>=3.8,<4",
