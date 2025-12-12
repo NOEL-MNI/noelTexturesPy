@@ -10,9 +10,9 @@ version = "0.2.2"
 app = { cmd = "python3 src/noelTexturesPy/app.py" }
 fmt = "ruff"
 lint = "pylint"
-test = { cmd = "python -m pytest tests/ -v" }
-test-unit = { cmd = "python -m pytest tests/test_noelTexturesPy.py -v" }
-test-webapp = { cmd = "python -m pytest tests/test_webapp.py -v" }
+test = { cmd = "python -m pytest tests/ -n auto -v" }
+test-unit = { cmd = "python -m pytest tests/test_noelTexturesPy.py -n auto -v" }
+test-webapp = { cmd = "python -m pytest tests/test_webapp.py -n auto -v" }
 test-all = { cmd = "bash tests/run_tests.sh" }
 
 [tasks.test-app]
@@ -54,6 +54,7 @@ pre-commit = ">=4.2.0,<5"
 [feature.test.pypi-dependencies]
 pytest = ">=9.0.2, <10"
 pyprojroot = ">=0.3.0, <0.4"
+pytest-xdist = ">=3.8.0,<4"
 
 [feature.py312.dependencies]
 python = "3.12.*"
