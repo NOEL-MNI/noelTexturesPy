@@ -30,7 +30,7 @@ dependencies = [
   "matplotlib>=3.9.2,<4",
   "numpy>=1.26.4",
   "pandas>=2.2.3,<3",
-  "pillow>=11,<12",
+  "pillow>=12,<13",
 ]
 
 urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
