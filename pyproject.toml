@@ -29,7 +29,7 @@ dependencies = [
   "flask>=3.0.3,<4",
   "matplotlib>=3.9.2,<4",
   "numpy>=1.26.4",
-  "pandas>=2.2.3,<3",
+  "pandas>=2.2.3,<4",
   "pillow>=12,<13",
 ]
 
