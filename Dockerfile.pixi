@@ -1,4 +1,4 @@
-FROM ghcr.io/prefix-dev/pixi:0.59.0 AS builder
+FROM ghcr.io/prefix-dev/pixi:0.70.1 AS builder
 LABEL maintainer=<ravnoor@gmail.com>
 
 # set variable for conditional test execution
