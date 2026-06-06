@@ -72,7 +72,7 @@ tests:
       - bash tests/run_tests.sh
     requirements:
       run:
-        - ${{ PYTHON }}
+        - python
         - pytest
         - pygments
     # extra files to be copied to the test folder from the recipe or source directory
