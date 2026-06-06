@@ -1,9 +1,12 @@
 name: Test AMD64 Docker image builds
 
 on:
-  push:
-  pull_request:
-    types: [opened, reopened]
+  # manual trigger
+  workflow_dispatch:
+    inputs:
+      context:
+        description: "manual trigger"
+        required: false
 
 jobs:
   docker-image:
