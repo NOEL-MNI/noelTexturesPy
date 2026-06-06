@@ -1,1 +1,1 @@
-channel_sources: https://prefix.dev/noel-forge,conda-forge
+channel_sources: [https://prefix.dev/noel-forge,conda-forge]
