@@ -18,12 +18,19 @@ permissions:
   contents: read
   id-token: write
 
+env:
+  BUILD_NUM: 3
+
 jobs:
-  build:
+  build-antspy:
     name: Build package
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     strategy:
+      fail-fast: false
       matrix:
+        python: [3.14, 3.13, 3.12]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-15]
         include:
           - os: ubuntu-latest
             target-platform: linux-64
@@ -31,13 +38,9 @@ jobs:
           - os: ubuntu-24.04-arm
             target-platform: linux-aarch64
             build-args: --target-platform linux-aarch64
-          - os: macos-26
+          - os: macos-15
             target-platform: osx-arm64
             build-args: --target-platform osx-arm64
-
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - uses: actions/checkout@v6
@@ -56,12 +59,15 @@ jobs:
         run: |
           echo "$(pwd)/.pixi/envs/build-ants/bin" >> $GITHUB_PATH
 
-      - name: Build individual packages
+      - name: Build ANTSPy
         shell: bash
         run: |
-          rattler-build build --continue-on-failure \
+          rattler-build build \
+            --continue-on-failure \
+            --skip-existing local \
             --recipe ./recipes/antspyx/ \
-            --recipe ./recipes/antspynet/  \
+            --variant python=${{ matrix.python }} \
+            --build-num ${{ env.BUILD_NUM }} \
             ${{ matrix.build-args }}  \
             --package-format conda:22
 
@@ -72,5 +78,49 @@ jobs:
         run: |
           for pkg in output/**/*.conda; do
             echo "Uploading ${pkg}"
-            rattler-build upload prefix -c noel-forge "${pkg}" --skip-existing
+            rattler-build upload prefix -c noel-forge "${pkg}" --skip-existing || true
+          done
+
+
+  build-antspynet:
+    name: Build ANTSPyNet
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - uses: prefix-dev/setup-pixi@v0.9.6
+        with:
+          pixi-version: v0.70.1
+          auth-host: prefix.dev
+          auth-token: ${{ secrets.PREFIX_API_KEY }}
+          environments: build-ants
+
+      - name: Add .pixi/envs/default/bin to the $PATH
+        shell: bash
+        run: |
+          echo "$(pwd)/.pixi/envs/build-ants/bin" >> $GITHUB_PATH
+
+      - name: Build ANTSPyNet
+        shell: bash
+        run: |
+          rattler-build build \
+            --continue-on-failure \
+            --skip-existing local \
+            --recipe ./recipes/antspynet/  \
+            --build-num ${{ env.BUILD_NUM }} \
+            ${{ matrix.build-args }}  \
+            --package-format conda:22
+
+      - name: Upload package
+        shell: bash
+        # do not upload on PR
+        if: github.event_name == 'push'
+        run: |
+          for pkg in output/**/*.conda; do
+            echo "Uploading ${pkg}"
+            rattler-build upload prefix -c noel-forge "${pkg}" --skip-existing || true
           done
