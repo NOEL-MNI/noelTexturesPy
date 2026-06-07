@@ -1,13 +1,14 @@
 context:
-  version: 0.3.1
+  version: 0.3.2
 
 package:
   name: antspynet
   version: ${{ version }}
 
 source:
-  git: https://github.com/ravnoor/ANTsPyNet.git
-  branch: main
+  - git: https://github.com/ANTsX/ANTsPyNet.git
+    # tag: v${{ version }}
+    rev: 399e2e3c62d60acf80a69721cb9bb27a1d498f08
 
 build:
   number: 1
@@ -22,7 +23,7 @@ requirements:
   - pip
   run:
   - numpy
-  - tensorflow <=2.18,>=2.11
+  - tensorflow
   - antspyx >=0.6.2
   - scikit-learn
   - requests
@@ -30,10 +31,10 @@ requirements:
   - matplotlib
 
 tests:
-- python:
-    imports:
-    - antspynet
-    pip_check: true
+  - python:
+      imports:
+      - antspynet
+      pip_check: true
 
 about:
   summary: A collection of deep learning architectures ported to the python language and tools for basic medical image processing.
