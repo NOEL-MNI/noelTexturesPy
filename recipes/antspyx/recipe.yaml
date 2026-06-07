@@ -1,6 +1,6 @@
 context:
   name: antspyx
-  version: 0.6.2
+  version: 0.6.3
 
 package:
   name: ${{ name }}
@@ -9,7 +9,7 @@ package:
 source:
   - git: https://github.com/ANTsX/ANTsPy.git
     # tag: v${{ version }}
-    rev: ab74a5376d8cd6b9c274d17476ea3062d3d48f73
+    rev: 6341c47f07ec063c848afd69e6c5060d77617c41
     patches:
       - itk_patch.diff
 
@@ -47,19 +47,18 @@ requirements:
     - pip
     - libpng
     - libitk-devel
-    - nanobind >=1.3.2
+    - nanobind >=1.3.2,<2.6
   run:
     - python
     - pandas
     - pyyaml
-    - numpy <=2.0.1
+    - numpy <2.4.0
     - statsmodels
     - webcolors
     - matplotlib-base
     - pillow
     - requests
     - scikit-learn
-    - scipy <1.16
     - pytest
     - pygments
 
