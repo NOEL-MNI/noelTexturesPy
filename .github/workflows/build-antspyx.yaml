@@ -142,6 +142,7 @@ jobs:
             --skip-existing local \
             --recipe ./recipes/antspynet/  \
             --build-num ${{ env.BUILD_NUM }} \
+            --channel-priority disabled \
             ${{ matrix.build-args }}  \
             --package-format conda:22
 
