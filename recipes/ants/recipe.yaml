@@ -3,7 +3,7 @@ schema_version: 1
 
 context:
   name: ANTs
-  version: 2.6.3
+  version: 2.6.5
 
 package:
   name: ${{ name|lower }}
@@ -11,7 +11,7 @@ package:
 
 source:
   url: https://github.com/ANTsX/ANTs/archive/v${{ version }}.tar.gz
-  sha256: 9e8bf4e6e336c2a8aa6e38159258549a92810e605b135599ea760970f4919438
+  sha256: c089cb8deac83cad51605299f38c418fdf2023c2e4d924cf4ccbe1a6f376740f
 
 build:
   number: 0
