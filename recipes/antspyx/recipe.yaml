@@ -9,7 +9,7 @@ package:
 source:
   - git: https://github.com/ANTsX/ANTsPy.git
     # tag: v${{ version }}
-    rev: 6341c47f07ec063c848afd69e6c5060d77617c41
+    rev: 11a81a8db90d81aaa938fd71c239876a5d7f2c76
     patches:
       - itk_patch.diff
 
