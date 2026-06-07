@@ -8,10 +8,16 @@ on:
       - 'feature/build*'
       - 'build/*'
       - pixi-dev
+    paths:
+      - 'recipes/**'
+      - '.github/workflows/build-antspyx.yaml'
   workflow_dispatch:
   pull_request:
     branches:
       - master
+    paths:
+      - 'recipes/**'
+      - '.github/workflows/build-antspyx.yaml'
 
 # trusted publishing permissions
 permissions:
@@ -53,6 +59,18 @@ jobs:
           auth-host: prefix.dev
           auth-token: ${{ secrets.PREFIX_API_KEY }}
           environments: build-ants
+
+      - name: Cache conda output packages
+        uses: actions/cache@v5
+        with:
+          path: |
+            output/noarch
+            output/osx-arm64
+            output/linux-64
+            output/linux-aarch64
+          key: ${{ runner.os }}-conda-output-${{ hashFiles('recipes/**', 'pixi.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-output-
 
       - name: Add .pixi/envs/default/bin to the $PATH
         shell: bash
@@ -98,6 +116,18 @@ jobs:
           auth-host: prefix.dev
           auth-token: ${{ secrets.PREFIX_API_KEY }}
           environments: build-ants
+
+      - name: Cache conda output packages
+        uses: actions/cache@v5
+        with:
+          path: |
+            output/noarch
+            output/osx-arm64
+            output/linux-64
+            output/linux-aarch64
+          key: ${{ runner.os }}-conda-output-${{ hashFiles('recipes/**', 'pixi.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-output-
 
       - name: Add .pixi/envs/default/bin to the $PATH
         shell: bash
