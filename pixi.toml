@@ -1,10 +1,11 @@
 [workspace]
 authors = ["Ravnoor Gill <ravnoor.gill@mcgill.ca>"]
-channels = ["conda-forge"]
+channels = ["https://repo.prefix.dev/noel-forge", "conda-forge", "main"]
 description = "Plotly Dash app to generate textures maps from MRI"
 name = "noelTexturesPy"
 platforms = ["linux-64", "linux-aarch64", "osx-arm64"]
 version = "0.2.2"
+# channel-priority = "disabled"
 
 [tasks]
 app = { cmd = "python3 src/noelTexturesPy/app.py" }
@@ -21,7 +22,7 @@ depends-on = [
 ]
 
 [dependencies]
-numpy = ">=2.4.6,<3"
+numpy = "*"
 scipy = ">=1.15.2,<2"
 pandas = ">=3.0.3,<4"
 matplotlib = ">=3.10.9,<4"
@@ -39,8 +40,8 @@ dash-html-components = ">=2.0.0, <3"
 chart-studio = ">=1.1.0, <2"
 
 [feature.ants]
-channels = ["https://repo.prefix.dev/noel-forge"]
-dependencies = { antspyx = ">=0.6.2,<0.7", antspynet = ">=0.3.1,<0.4" }
+channels = [ "https://repo.prefix.dev/noel-forge", {channel = "main", priority = -1}]
+dependencies = { antspyx = ">=0.6.3,<0.7", antspynet = ">=0.3.2,<0.4" }
 
 [feature.build-ants.dependencies]
 rattler-build = ">=0.65.1,<0.66"
@@ -57,11 +58,9 @@ pytest = "*"
 pyprojroot = ">=0.3.0, <0.4"
 pytest-xdist = ">=3.8.0, <4"
 
-[feature.py312.dependencies]
-python = ">=3.12.13,<3.13"
+
 
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
 dev = {features = ["ants", "dev", "test"]}
 default = {features = ["ants", "test"]}
-py312 = {features = ["ants", "test", "py312"], solve-group = "py312"}
