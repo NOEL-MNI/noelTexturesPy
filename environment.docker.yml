@@ -1,4 +1,4 @@
-# use unpinned version for micromamba install 
+# use unpinned version for micromamba install
 # for docker deployment
 name: noelTexturesPy
 channels:
@@ -17,3 +17,5 @@ dependencies:
   - flask
   - pyyaml
   - webcolors
+  - pytest
+  - pyprojroot

@@ -1,23 +1,15 @@
-name: Test AMD64 Docker image builds
+name: Test Pixi-based Docker image builds
 
 on:
-  # manual trigger
-  workflow_dispatch:
-    inputs:
-      context:
-        description: "manual trigger"
-        required: false
+  push:
+  pull_request:
+    types: [opened, reopened]
 
 jobs:
-  docker-image:
-    name: Test Docker pynoel-gui-app build
+  docker-image-pixi:
+    name: Test Docker build using Dockerfile.pixi
     runs-on: ubuntu-latest
     steps:
-      - name: Remove unnecessary files
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-
       - name: Check out the repository
         uses: actions/checkout@v6
 
@@ -26,12 +18,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v4
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Determine branch name (non-PR events)
         if: github.event_name != 'pull_request'
@@ -47,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: noelmni/pynoel-gui-app
+          images: noelmni/textures-py
           tags: |
             type=raw,value=${{ env.BRANCH_NAME }}-${{ github.event.commit_id }}
           labels: |
@@ -55,28 +41,14 @@ jobs:
             org.opencontainers.image.description="Dash app to generate texture maps from MRI using Advanced Normalization Tools"
             org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.x'
-
-      - name: Install Python build dependencies
-        run: |
-          python -m pip install --upgrade pip setuptools wheel build
-
-      - name: Build Python wheel and upload artifact
-        id: wheels
-        run: python -m build --wheel --outdir dist/
-      - uses: actions/upload-artifact@v7
-        with:
-          name: wheels
-          path: dist/*.whl
-
-      - name: Build Docker image (test only)
+      - name: Build Docker image using Dockerfile.pixi (multi-arch test build)
         uses: docker/build-push-action@v7
         with:
           context: .
-          platforms: linux/amd64
-          push: false  # ensure the image is not pushed to Docker Hub during testing
+          file: Dockerfile.pixi
+          platforms: linux/amd64,linux/arm64
+          push: false  # test build only; do not push
+          build-args: |
+            SKIP_TESTS=true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

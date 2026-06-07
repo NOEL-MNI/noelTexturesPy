@@ -7,6 +7,7 @@ from tempfile import mkdtemp
 import ants
 import numpy as np
 import numpy.testing as nptest
+from pyprojroot.here import here
 
 from noelTexturesPy.image_processing import noelTexturesPy
 
@@ -15,6 +16,20 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 TEMPDIR = os.environ.get('TEMPDIR', mkdtemp())
+
+GT_T1_IMAGE = os.path.join(here(), 'tests', 'data', 'ground-truth', 't1_final.nii.gz')
+GT_T2_IMAGE = os.path.join(here(), 'tests', 'data', 'ground-truth', 't2_final.nii.gz')
+GT_GM_IMAGE = os.path.join(
+    here(), 'tests', 'data', 'ground-truth', 't1_gradient_magnitude.nii.gz'
+)
+GT_RI_IMAGE = os.path.join(
+    here(), 'tests', 'data', 'ground-truth', 't1_relative_intensity.nii.gz'
+)
+T1_IMAGE = os.path.join(here(), 'tests', 'data', 'inputs', 'sub-00055', 't1.nii.gz')
+T2_IMAGE = os.path.join(here(), 'tests', 'data', 'inputs', 'sub-00055', 'flair.nii.gz')
+TEMPLATE_IMAGE = os.path.join(
+    here(), 'templates', 'mni_icbm152_t1_tal_nlin_sym_09a.nii.gz'
+)
 
 
 def compare_images(predicted_image, ground_truth_image, metric_type='correlation'):
@@ -54,10 +69,10 @@ class LoggedTestCase(unittest.TestCase):
 class TestNoelTexturesPy(LoggedTestCase):
     def setUp(self):
         self._id = 'test_case'
-        self._t1file = './data/inputs/sub-00055/t1.nii.gz'
-        self._t2file = './data/inputs/sub-00055/flair.nii.gz'
+        self._t1file = T1_IMAGE
+        self._t2file = T2_IMAGE
         self._outputdir = TEMPDIR
-        self._template = '../templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz'
+        self._template = TEMPLATE_IMAGE
         self._usen3 = False
         self.noelTexturesPy = noelTexturesPy(
             id=self._id,
@@ -70,18 +85,10 @@ class TestNoelTexturesPy(LoggedTestCase):
         )
 
         # load predictions from a previous validated run (known as ground-truth labels in this context)
-        self.gt_t1_reg = ants.image_read('./data/ground-truth/t1_final.nii.gz').clone(
-            'float'
-        )
-        self.gt_t2_reg = ants.image_read('./data/ground-truth/t2_final.nii.gz').clone(
-            'float'
-        )
-        self.gt_gm = ants.image_read(
-            './data/ground-truth/t1_gradient_magnitude.nii.gz'
-        ).clone('float')
-        self.gt_ri = ants.image_read(
-            './data/ground-truth/t1_relative_intensity.nii.gz'
-        ).clone('float')
+        self.gt_t1_reg = ants.image_read(GT_T1_IMAGE).clone('float')
+        self.gt_t2_reg = ants.image_read(GT_T2_IMAGE).clone('float')
+        self.gt_gm = ants.image_read(GT_GM_IMAGE).clone('float')
+        self.gt_ri = ants.image_read(GT_RI_IMAGE).clone('float')
 
         try:
             os.mkdir(self._outputdir)
@@ -139,7 +146,7 @@ class TestNoelTexturesPy(LoggedTestCase):
             self.gt_t1_reg,
             metric_type='correlation',
         )
-        print('correlation of the current t1 with the ground truth: {}'.format(metric))
+        print(f'correlation of the current t1 with the ground truth: {metric}')
         # set relative tolerance to 0.1
         # predicted image is expected to have overlap within 0.1
         nptest.assert_allclose(1.0, metric, rtol=0.1, atol=0.1)
@@ -149,7 +156,7 @@ class TestNoelTexturesPy(LoggedTestCase):
             self.gt_t2_reg,
             metric_type='correlation',
         )
-        print('correlation of the current t2 with the ground truth: {}'.format(metric))
+        print(f'correlation of the current t2 with the ground truth: {metric}')
         # set relative tolerance to 0.1
         # predicted image is expected to have overlap within 0.1
         nptest.assert_allclose(1.0, metric, rtol=0.1, atol=0.1)

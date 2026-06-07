@@ -3,3 +3,8 @@
 !tests/
 !templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz
 !environment.docker.yml
+!pixi.toml
+!pixi.lock
+!src/
+!pyproject.toml
+!README.md

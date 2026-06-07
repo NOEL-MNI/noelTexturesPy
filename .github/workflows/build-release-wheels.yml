@@ -1,0 +1,51 @@
+name: Build and publish wheels to PyPI (uv)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+# Trusted publishing requires OIDC token and read access
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-publish:
+    name: Build sdist/wheel and publish to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with tags for setuptools_scm)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+
+      - name: Build artifacts (sdist + wheel)
+        run: uv build --wheel --sdist
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/*
+
+      - name: Publish to PyPI (trusted publishing)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          print-hash: true
+          # repository-url: https://upload.pypi.org/legacy/   # default PyPI
+          # skip-existing: true                              # optional: skip on re-runs
+          # provenance: true                                 # enabled by default on supported builds

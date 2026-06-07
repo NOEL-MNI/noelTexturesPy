@@ -112,3 +112,6 @@ venv.bak/
 
 # scm versioning
 src/noelTexturesPy/_version.py
+
+# rattle-build artefacts
+recipes/*/output/

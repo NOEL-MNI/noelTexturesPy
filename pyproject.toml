@@ -1,80 +1,87 @@
 [build-system]
-requires = ["setuptools>=75", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
+requires = [ "setuptools>=75", "setuptools-scm[toml]>=8" ]
 
 [project]
-name = "noelTexturesPy"
+name = "noel-textures-py"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
-authors = [
-    { name = "NOEL-MNI", email = "ravnoor.gill@mcgill.ca" }
-]
-keywords = ["MRI", "texture maps", "ANTsPy", "Dash"]
+keywords = [ "ANTsPy", "Dash", "MRI", "texture maps" ]
 license = { file = "LICENSE" }
-classifiers = [
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
+authors = [
+  { name = "NOEL-MNI", email = "ravnoor.gill@mail.mcgill.ca" },
 ]
-requires-python = ">=3.9"
-dynamic = ["version"]
+requires-python = ">=3.12"
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+dynamic = [ "version" ]
 
 dependencies = [
-    "dash",
-    "dash-bootstrap-components",
-    "dash-html-components",
-    "flask",
-    "antspyx>=0.4.2",
-    "antspynet>=0.2.9",
-    "matplotlib",
-    "numpy",
-    "pandas",
-    "Pillow"
+  "dash>=3.3,<4",
+  "dash-bootstrap-components>=2.0.4,<3",
+  "dash-html-components>=2,<3",
+  "flask>=3.0.3,<4",
+  "matplotlib>=3.9.2,<4",
+  "numpy>=1.26.4",
+  "pandas>=2.2.3,<4",
+  "pillow>=12,<13",
 ]
 
-[project.urls]
-Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
-Documentation = "https://noel-mni.github.io/noelTexturesPy"
+urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
+urls.Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
+scripts.textures_app = "noelTexturesPy.app:main"
 
-[project.optional-dependencies]
-dev = ["pytest"]
-
-[project.scripts]
-textures_app = "noelTexturesPy.app:run_server"
-textures_app-debug = "noelTexturesPy.app:run_debug_server"
+[dependency-groups]
+dev = [
+  "mypy>=1.19,<2",
+  "pyprojroot>=0.3,<0.4",
+  "pytest>=9.0.2,<10",
+  "pytest-xdist>=3.8,<4",
+]
+ants = [
+  "antspynet>=0.3.1",
+  "antspyx>=0.6.2",
+]
 
 [tool.setuptools]
 include-package-data = false
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["noelTexturesPy*"]
-exclude = ["web*", "docker*", "images*", "templates*", "docs*", "build*", ".pixi*", ".github*"]
+where = [ "src" ]
+include = [ "noelTexturesPy*" ]
+exclude = [ "web*", "docker*", "images*", "templates*", "docs*", "build*", ".pixi*", ".github*" ]
 
 [tool.setuptools_scm]
 write_to = "src/noelTexturesPy/_version.py"
+fallback_version = "0.2.2"
 version_scheme = "no-guess-dev"
 
-[tool.ruff.format]
-quote-style = 'single'
-
-[tool.ruff.lint]
-preview = true
-select = [
-    "B",
-    "E",
-    "F",
-    "I",
-    "W",
+[tool.ruff]
+format.quote-style = "single"
+lint.select = [
+  "B",
+  "E",
+  "F",
+  "I",
+  "W",
 ]
-ignore = [
-    "E203",
-    "E501",
-    "N813",
+lint.ignore = [
+  "E203",
+  "E501",
+  "N813",
 ]
+lint.isort.force-single-line = true
+lint.preview = true
 
-[tool.ruff.lint.isort]
-force-single-line = true
+[tool.pytest.ini_options]
+addopts = [ "-n", "auto", "-v" ]
+testpaths = [ "tests" ]
 
 [tool.mypy]
 pretty = true
@@ -89,4 +96,8 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "ants.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "antspynet.*"
 ignore_missing_imports = true
