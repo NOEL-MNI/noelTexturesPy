@@ -60,7 +60,8 @@ jobs:
         shell: bash
         run: |
           rattler-build build --continue-on-failure \
-            --recipe-dir ./recipes  \
+            --recipe ./recipes/antspyx/ \
+            --recipe ./recipes/antspynet/  \
             ${{ matrix.build-args }}  \
             --package-format conda:22
 
