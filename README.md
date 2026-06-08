@@ -2,19 +2,28 @@
 Dash app to generate textures maps from MRI using Advanced Normalization Tools ([ANTsPy](https://antspyx.readthedocs.io/en/latest/))
 <hr>
 
-| **Demo**                       | **Documentation**                          |
-|--------------------------------|--------------------------------------------|
-|<a href="https://demo.noel.neocortex.ca" target="_blank">demo.noel.neocortex.ca</a>  | <a href="https://noel-mni.github.io/noelTexturesPy/" target="_blank">noel-mni.github.io/noelTexturesPy</a>  |
-| username: demo                 |                                            |
-| password: demo                 |                                            |
+**Documentation**: https://noel-mni.github.io/noelTexturesPy/
 
 <hr>
 
-
 ## Prerequisites
+- [Pixi](https://pixi.sh) (for pixi-based installation, preferred method for local installation)
 - [Docker](https://www.docker.com/get-started) (for Docker installation)
-- [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) (for local installation)
-- [Pixi](https://pixi.sh) (for pixi-based installation)
+- [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) (for legacy conda-based installations)
+
+### Installing Pixi
+```bash
+# Linux/macOS (recommended method)
+curl -fsSL https://pixi.sh/install.sh | sh
+
+# Alternative methods:
+# Homebrew (macOS): brew install pixi
+# Conda-forge: conda install -c conda-forge pixi
+
+# Add pixi to your PATH (if not automatically added)
+export PATH="$HOME/.pixi/bin:$PATH"
+echo 'export PATH="$HOME/.pixi/bin:$PATH"' >> ~/.bashrc
+```
 
 ### Installing Micromamba
 ```bash
@@ -42,33 +51,8 @@ eval "$(micromamba shell hook -s posix)"
 # Conda-forge: conda install -c conda-forge micromamba
 ```
 
-### Installing Pixi
-```bash
-# Linux/macOS (recommended method)
-curl -fsSL https://pixi.sh/install.sh | bash
-
-# Alternative methods:
-# Homebrew (macOS): brew install pixi
-# Conda-forge: conda install -c conda-forge pixi
-# Windows (PowerShell): iwr -useb https://pixi.sh/install.ps1 | iex
-
-# Add pixi to your PATH (if not automatically added)
-export PATH="$HOME/.pixi/bin:$PATH"
-echo 'export PATH="$HOME/.pixi/bin:$PATH"' >> ~/.bashrc
-```
-
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
-![Usage noelTexturesPy GIF](images/textures.gif)
-
-
-
-## Run the app (using prebuilt images)
-```bash
-docker pull noelmni/pynoel-gui-app:latest
-docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
-```
-Access the Web UI at http://localhost:9999
 
 ## Local Installation with Pixi
 For local development using pixi (modern conda-compatible package manager):
@@ -92,6 +76,15 @@ pixi run textures_app --debug --port 9988
 ```
 
 Access the Web UI at http://localhost:9999 (or your specified port)
+
+## Run the app (using prebuilt images)
+```bash
+docker pull noelmni/pynoel-gui-app:latest
+docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
+```
+Access the Web UI at http://localhost:9999
+
+![Usage noelTexturesPy GIF](images/textures.gif)
 
 ## Local Installation with Micromamba
 For local development and usage, you can install the app using micromamba:
