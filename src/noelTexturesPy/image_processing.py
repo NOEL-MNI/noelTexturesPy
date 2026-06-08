@@ -307,8 +307,45 @@ class noelTexturesPy:
             image = self._t2_n4
         else:
             sys.exit('invalid contrast specified for brain extraction')
+        # modality → antspynet network ID and weights filename (cached in ~/.keras/ANTsXNet/)
+        _WEIGHTS_ID = {
+            't1': 'brainExtractionRobustT1',
+            't2': 'brainExtractionRobustT2',
+        }
+        try:
+            prob = brain_extraction(image, modality=self._modality)
+        except OSError as exc:
+            from antspynet.utilities import (
+                get_antsxnet_cache_directory,  # noqa: PLC0415
+            )
+            from antspynet.utilities import get_pretrained_network  # noqa: PLC0415
 
-        prob = brain_extraction(image, modality=self._modality)
+            cache_dir = get_antsxnet_cache_directory()
+            weights_id = _WEIGHTS_ID.get(self._modality, '')
+            weights_path = os.path.join(cache_dir, weights_id + '.h5')
+            if weights_id and os.path.isfile(weights_path):
+                self._logger.warning(
+                    'Corrupt brain-extraction weights detected at '
+                    f'{weights_path} — deleting and re-downloading...'
+                )
+                print(
+                    'Corrupt brain-extraction weights detected — '
+                    'deleting and re-downloading from ANTsXNet cache...'
+                )
+                os.remove(weights_path)
+                get_pretrained_network(weights_id)
+                prob = brain_extraction(image, modality=self._modality)
+            else:
+                msg = '\n'.join(
+                    [
+                        f'Brain-extraction model weights could not be loaded '
+                        f'(modality={self._modality!r}).',
+                        f'  Expected cache file : {weights_path}',
+                        f'  h5py reported       : {exc}',
+                    ]
+                )
+                self._logger.error(msg)
+                raise OSError(msg) from exc
         # mask can be obtained as:
         mask = ants.threshold_image(
             prob, low_thresh=0.5, high_thresh=1.0, inval=1, outval=0, binary=True
