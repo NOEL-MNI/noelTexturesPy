@@ -1,0 +1,21 @@
+[[pre-switch]]
+rebase = "git pull --rebase --autostash"
+
+[[pre-start]]
+copy = "wt step copy-ignored"
+
+[post-start]
+direnv = "direnv allow"
+
+[post-remove]
+
+[forge]
+platform = "github"
+
+# copy gitignored files to another worktree
+[step.copy-ignored]
+# exclude = [".env"]
+
+[aliases]
+# deploy = "make deploy BRANCH={{ branch }}"
+tmux = "tmux new -As textures_{{ worktree_name | sanitize }}"
