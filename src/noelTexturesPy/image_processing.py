@@ -159,6 +159,11 @@ class noelTexturesPy:
             self._modality = 't2'
             self._mask = self.brain_extraction()
 
+        ants.image_write(
+                self._mask,
+                os.path.join(self._outputdir, self._id + '_brainmask.nii'),
+            )
+
     def segmentation(self):
         self._logger.info('computing GM, WM, CSF segmentation')
         print('computing GM, WM, CSF segmentation')
@@ -183,6 +188,11 @@ class noelTexturesPy:
             self._segm = segm['segmentation']
             self._gm = np.where((self._segm.numpy() == 2), 1, 0).astype('float32')
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
+
+        ants.image_write(
+                self._segm,
+                os.path.join(self._outputdir, self._id + '_segmentation.nii'),
+            )
 
     def gradient_magnitude(self):
         self._logger.info('computing gradient magnitude')

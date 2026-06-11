@@ -36,6 +36,7 @@ dependencies = [
 urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
 urls.Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
 scripts.textures_app = "noelTexturesPy.app:main"
+scripts.textures_cli = "noelTexturesPy.cli:main"
 
 [dependency-groups]
 dev = [
@@ -82,6 +83,7 @@ lint.preview = true
 [tool.pytest.ini_options]
 addopts = [ "-n", "auto", "-v" ]
 testpaths = [ "tests" ]
+pythonpath = [ "src" ]
 
 [tool.mypy]
 pretty = true

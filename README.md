@@ -77,6 +77,24 @@ pixi run textures_app --debug --port 9988
 
 Access the Web UI at http://localhost:9999 (or your specified port)
 
+## CLI (Headless)
+
+`textures_cli` runs the same pipeline without a browser — suitable for batch processing, HPC clusters, and scripted workflows.
+
+```bash
+# T1 only
+textures_cli --t1 sub-001/t1.nii.gz
+
+# T1 + FLAIR, explicit case ID and output directory
+textures_cli --t1 sub-001/t1.nii.gz --t2 sub-001/flair.nii.gz \
+             --case-id sub001 --output-dir ./results/sub-001
+
+# Full help
+textures_cli --help
+```
+
+See the [full CLI reference](docs/cli.md) for all options.
+
 ## Run the app (using prebuilt images)
 ```bash
 docker pull noelmni/pynoel-gui-app:latest
