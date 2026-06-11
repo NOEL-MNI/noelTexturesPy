@@ -8,7 +8,7 @@ version = "0.2.2"
 # channel-priority = "disabled"
 
 [tasks]
-app = { cmd = "python3 src/noelTexturesPy/app.py" }
+app = { cmd = "python -m src.noelTexturesPy.app" }
 fmt = "ruff"
 lint = "pylint"
 test = { cmd = "python -m pytest tests/ -n auto -v" }
@@ -57,7 +57,6 @@ mypy = ">=2.1.0, <3"
 pytest = "*"
 pyprojroot = ">=0.3.0, <0.4"
 pytest-xdist = ">=3.8.0, <4"
-
 
 
 [environments]
