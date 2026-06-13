@@ -16,9 +16,9 @@ pixi install -e dev   # dev env also adds pre-commit, mypy, datalad
 ## Running the application
 
 ```bash
-pixi run app                      # start web UI on :9999
-textures_app --port 9988          # after pip/pixi install
-textures_app --debug --port 9988
+pixi run app                              # start web UI on :9999
+textures_app --port 9988                  # after pip/pixi install
+textures_cli --t1 /path/to/t1.nii.gz      # headless pipeline (no UI)
 ```
 
 **Input file naming** (enforced by `app.py`):
@@ -30,6 +30,8 @@ textures_app --debug --port 9988
 ```
 <id>_t1_final.nii
 <id>_t2_final.nii              (if T2 provided)
+<id>_brainmask.nii
+<id>_segmentation.nii
 <id>_t1_gradient_magnitude.nii
 <id>_t1_relative_intensity.nii
 <id>_QC_report.pdf
@@ -43,6 +45,7 @@ textures_app --debug --port 9988
 pixi run test            # full suite, parallel (-n auto) — uses pyproject.toml settings
 pixi run test-unit       # test_noelTexturesPy.py only — requires ANTs, takes minutes
 pixi run test-webapp     # test_webapp.py only — fast, no ANTs needed
+pixi run test-brainchop  # NOT a pixi task; use: pixi run python -m pytest tests/test_brainchop.py -v
 
 # Single test
 python -m pytest tests/test_webapp.py::test_app_initialization -v
@@ -53,10 +56,9 @@ tox -e pytest
 
 - `test_noelTexturesPy.py` imports `ants` and `antspynet` at **module level** — it errors in envs
   without the `ants` pixi feature. The default `pixi install` env includes ANTs.
+- `test_brainchop.py` mocks all brainchop/ANTs deps via `sys.modules` injection — fast, no real models needed.
 - Pipeline integration tests compare NIfTI outputs against `tests/data/ground-truth/` via
   `ants.image_similarity(metric='Correlation')` with `rtol=atol=0.1`. They are slow (~minutes each).
-- `pixi run test-all` calls `tests/run_tests.sh`, which `pushd`es into `tests/` and runs pytest
-  **without** `-n auto` (sequential, no xdist parallelism).
 - Tests use `pyprojroot.here()` for paths; always run from the repo root.
 
 ---
@@ -103,6 +105,9 @@ Version comes from Git tags via **setuptools-scm**. Never edit `src/noelTextures
   is mounted on it, enabling the custom `/download/<path>` route for NIfTI / PDF serving.
 - **Sequential pipeline class**: `noelTexturesPy` in `image_processing.py` holds all state as
   `_`-prefixed instance attributes; `file_processor()` chains all steps in fixed order.
+- **Brainchop class**: `Brainchop` in `image_processing.py` wraps brainchop library for brain
+  extraction (`mindgrab`) and segmentation (`robust_tissue`). Uses `_ensure_optimized()` for
+  BEAM caching and `_resample_to_reference()` for spatial alignment to the input image grid.
 - **Side effect on import**: importing `image_processing` calls `custom_logger()` at module level,
   which sets `TEMPDIR` in the process environment if it is not already set.
 - **CPU-only TF**: `CUDA_VISIBLE_DEVICES='-1'` and `TF_CPP_MIN_LOG_LEVEL='3'` are set at import
@@ -112,6 +117,18 @@ Version comes from Git tags via **setuptools-scm**. Never edit `src/noelTextures
   `tempfile.mkdtemp()` if unset. Sub-dirs: `uploads/`, `outputs/`, `qc/`.
 - **MNI template**: resolved as `./templates/mni_icbm152_t1_tal_nlin_sym_09a.nii.gz` relative to
   the working directory at startup — must exist when the app is launched.
+
+---
+
+## Brainchop gotchas
+
+- `niimath -conform` reorients data to RAS; the raw NIfTI sform does NOT match the ANTsPy
+  direction. Always use `ants.image_read()` to get correct RAS-converted spatial metadata.
+- `ants.resample_image_to_target()` returns all-zeros when direction cosines have negative
+  entries. Use direct numpy voxel mapping through physical space instead.
+- `ants.apply_transforms()` requires file paths for transforms, not in-memory objects.
+- `brainchop.optimize()` takes a model name (`mindgrab`, `robust_tissue`), not a task name
+  (`brain-extraction`, `segmentation`).
 
 ---
 
