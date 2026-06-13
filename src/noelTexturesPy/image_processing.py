@@ -43,6 +43,12 @@ FILE_MAPPING = {
 }
 
 class Brainchop:
+    _TASK_MODEL = {
+        'brain-extraction': 'mindgrab',
+        'segmentation': 'robust_tissue',
+    }
+    _optimized: set[str] = set()
+
     def __init__(self, input_image, output_image=None, task='brain-extraction', reference_image=None):
         self.input_image = input_image
         self.output_image = output_image
@@ -53,22 +59,28 @@ class Brainchop:
         from brainchop import load
         return load(self.input_image)
 
-    def optimize(self, vol):
-        from brainchop import optimize
-        return optimize(vol, self.task)
-
     def save(self, result):
         from brainchop import save
         save(result, self.output_image)
 
+    @classmethod
+    def _ensure_optimized(cls, model: str) -> None:
+        """Run BEAM optimization for *model* once (cached on disk)."""
+        if model in cls._optimized:
+            return
+        from brainchop.api import _get_best_beam
+        if _get_best_beam(model, 1) is None:
+            from brainchop import optimize
+            optimize(model, beam=2)
+        cls._optimized.add(model)
+
     def segment(self):
         from brainchop import segment
-        if self.task == 'brain-extraction':
-            result = segment(self.load(), "mindgrab")
-        elif self.task == 'segmentation':
-            result = segment(self.load(), "robust_tissue")
-        else:
+        model = self._TASK_MODEL.get(self.task)
+        if model is None:
             sys.exit('invalid brainchop task specified')
+        self._ensure_optimized(model)
+        result = segment(self.load(), model)
         if self.reference_image is not None:
             return self._resample_to_reference(result, self.reference_image)
         return self.to_ants_image(result)
@@ -373,7 +385,7 @@ class noelTexturesPy:
                 os.path.join(self._outputdir, self._id + '_brainmask.nii'),
             )
 
-    def segmentation(self, type="brainchop", dtype=np.float32):
+    def segmentation(self, type="atropos", dtype=np.float32):
         self._logger.info('computing GM, WM, CSF segmentation')
         print('computing GM, WM, CSF segmentation')
         # https://antsx.github.io/ANTsPyNet/docs/build/html/utilities.html#applications
