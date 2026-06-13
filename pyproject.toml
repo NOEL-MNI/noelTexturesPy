@@ -23,6 +23,7 @@ classifiers = [
 dynamic = [ "version" ]
 
 dependencies = [
+  "brainchop>=0.2.3,<1",
   "dash>=3.3,<5",
   "dash-bootstrap-components>=2.0.4,<3",
   "flask>=3.0.3,<4",
