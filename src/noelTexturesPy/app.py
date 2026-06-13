@@ -10,6 +10,7 @@ import tempfile
 from urllib.parse import quote as urlquote
 
 import dash_bootstrap_components as dbc
+import matplotlib as mpl
 from dash import Dash
 from dash import Input
 from dash import Output
@@ -18,6 +19,8 @@ from dash import callback
 from dash import html
 from flask import Flask
 from flask import send_from_directory
+
+mpl.use('Agg')
 
 from noelTexturesPy.image_processing import case_id as random_case_id
 from noelTexturesPy.image_processing import log_filename
