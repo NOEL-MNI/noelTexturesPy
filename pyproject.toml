@@ -11,6 +11,10 @@ license = { file = "LICENSE" }
 authors = [
   { name = "NOEL-MNI", email = "ravnoor.gill@mail.mcgill.ca" },
 ]
+
+urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
+urls.Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
+
 requires-python = ">=3.12"
 classifiers = [
   "License :: OSI Approved :: MIT License",
@@ -32,8 +36,6 @@ dependencies = [
   "pillow>=12,<13",
 ]
 
-urls.Documentation = "https://noel-mni.github.io/noelTexturesPy"
-urls.Homepage = "https://github.com/NOEL-MNI/noelTexturesPy"
 scripts.textures_app = "noelTexturesPy.app:main"
 scripts.textures_cli = "noelTexturesPy.cli:main"
 
