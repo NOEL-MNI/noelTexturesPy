@@ -44,10 +44,16 @@ dev = [
   "pytest>=9.0.2,<10",
   "pytest-xdist>=3.8,<4",
 ]
+
+[project.optional-dependencies]
 ants = [
-  "antspynet>=0.3.1",
-  "antspyx>=0.6.2",
+  "antspyx>=0.6.3,<0.7",
+  "antstorch"
 ]
+
+[tool.uv.sources]
+anstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps" }
+# antstorch = { path = "./deps/ANTsTorch", package = false }
 
 [tool.setuptools]
 include-package-data = false

@@ -40,7 +40,11 @@ chart-studio = ">=1.1.0, <2"
 
 [feature.ants]
 channels = [ "https://repo.prefix.dev/noel-forge", {channel = "main", priority = -1}]
-dependencies = { antspyx = ">=0.6.3,<0.7", antspynet = ">=0.3.2,<0.4" }
+dependencies = { antspyx = ">=0.6.3,<0.7" }
+
+[feature.ants.pypi-dependencies]
+antstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps"}
+# antstorch = { path = "./deps/ANTsTorch", editable = true}
 
 [feature.build-ants.dependencies]
 rattler-build = ">=0.66.0,<0.67"
