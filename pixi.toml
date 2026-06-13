@@ -41,6 +41,7 @@ chart-studio = ">=1.1.0, <2"
 [feature.ants]
 channels = [ "https://repo.prefix.dev/noel-forge", {channel = "main", priority = -1}]
 dependencies = { antspyx = ">=0.6.3,<0.7" }
+tasks = {download-models = { cmd = "python download-models.py", default-environment = "ants", cwd = "scripts" }}
 
 [feature.ants.pypi-dependencies]
 antstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps"}

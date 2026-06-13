@@ -24,6 +24,9 @@ RUN echo 'exec "$@"' >> /app/entrypoint.sh
 # copy the rest of the application
 COPY . .
 
+# download pretrained models using pixi task
+RUN pixi run download-models
+
 # run tests if SKIP_TESTS is not true
 RUN if [ "${SKIP_TESTS}" != "true" ]; then \
     pixi run -e dev python -m pytest tests/test_noelTexturesPy.py -v; \
@@ -32,7 +35,7 @@ RUN if [ "${SKIP_TESTS}" != "true" ]; then \
 # production image
 FROM ubuntu:24.04 AS production
 ENV TZ=America/Montreal
-
+USER ubuntu
 WORKDIR /app
 
 # only copy the production environment into prod container
@@ -41,6 +44,7 @@ COPY --from=builder --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
 COPY --from=builder /app/templates /app/templates
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/pyproject.toml /app/pyproject.toml
+COPY --from=builder --chown=ubuntu:ubuntu /root/.antstorch /home/ubuntu/.antstorch
 
 EXPOSE 9999
 
