@@ -1,37 +1,57 @@
-FROM noelmni/antspynet:master-58b19c9-mamba AS builder
+FROM ghcr.io/prefix-dev/pixi:0.70.2 AS builder
 LABEL maintainer=<ravnoor@gmail.com>
 
 # set variable for conditional test execution
 ARG SKIP_TESTS=false
 
-USER root
+WORKDIR /app
 
-COPY --chown=$MAMBA_USER:$MAMBA_USER environment.docker.yml environment.yml
-RUN echo "installing environment" && \
-  micromamba clean --all --yes && \
-  micromamba install --name base --file environment.yml --yes && \
-  micromamba clean --all --yes
+RUN pixi global install git
 
-WORKDIR /usr/local/src
+# copy pixi configuration files and pyproject.toml (needed for editable install)
+COPY pixi.toml pixi.lock pyproject.toml ./
+COPY src ./src
 
+# install dependencies using pixi
+RUN pixi install --locked -e default
+RUN pixi install --locked -e prod
+
+# create the shell-hook bash script to activate the prod environment
+RUN pixi shell-hook -e prod -s bash > /shell-hook
+
+RUN echo "#!/usr/bin/env bash" > /app/entrypoint.sh
+RUN cat /shell-hook >> /app/entrypoint.sh
+# extend the shell-hook script to run the command passed to the container
+RUN echo 'exec "$@"' >> /app/entrypoint.sh
+
+# copy the rest of the application
 COPY . .
-ARG MAMBA_DOCKERFILE_ACTIVATE=1
-RUN pip install --no-deps dist/*.whl
+
+# download pretrained models using pixi task
+RUN pixi run download-models
 
 # run tests if SKIP_TESTS is not true
-RUN if [ "${SKIP_TESTS}" != "true" ]; then bash tests/run_tests.sh; fi
+RUN if [ "${SKIP_TESTS}" != "true" ]; then \
+    pixi run -e dev python -m pytest tests/test_noelTexturesPy.py -v; \
+    fi
 
 # production image
-FROM mambaorg/micromamba:2-debian12-slim
+FROM ubuntu:24.04 AS production
 ENV TZ=America/Montreal
-COPY --from=builder /opt/conda /opt/conda
-COPY --from=builder /usr/local/src/templates /usr/local/src/templates
-USER $MAMBA_USER
+USER ubuntu
+WORKDIR /app
 
-WORKDIR /usr/local/src
+# only copy the production environment into prod container
+COPY --from=builder /app/.pixi/envs/prod /app/.pixi/envs/prod
+COPY --from=builder --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
+COPY --from=builder /app/templates /app/templates
+COPY --from=builder /app/src /app/src
+COPY --from=builder /app/pyproject.toml /app/pyproject.toml
+COPY --from=builder --chown=ubuntu:ubuntu /root/.antstorch /home/ubuntu/.antstorch
 
 EXPOSE 9999
 
-ARG MAMBA_DOCKERFILE_ACTIVATE=1
-SHELL [ "/usr/local/bin/_dockerfile_shell.sh" ]
-ENTRYPOINT [ "/usr/local/bin/_entrypoint.sh", "textures_app" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]
+
+# run your app inside the pixi environment
+CMD [ "textures_app" ]

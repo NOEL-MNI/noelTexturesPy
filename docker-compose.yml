@@ -6,8 +6,8 @@ services:
   textures-app:
     build:
       context: .
-    image: noelmni/pynoel-gui-app:latest
-    container_name: pynoel-gui-app
+    image: noelmni/textures-py:latest
+    container_name: textures-py
     restart: always
     environment:
       - PUID=$PUID

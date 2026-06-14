@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  pynoel-gui-app:
+  textures-py:
     build:
       context: .
-    image: noelmni/pynoel-gui-app:latest
-    container_name: pynoel-gui-app
+    image: noelmni/textures-py:latest
+    container_name: textures-py
     restart: always
     environment:
       - PUID=$PUID
@@ -120,7 +120,7 @@ services:
       # - CF_API_EMAIL_FILE=/run/secrets/cf_email
       # - CF_API_KEY_FILE=/run/secrets/cf_api_key
       # - HTPASSWD_FILE=/run/secrets/htpasswd # HTPASSWD_FILE can be whatever as it is not used/called anywhere.
-      - $DOMAINNAME_SHB # Passing the domain name to traefik container to be able to use the variable in rules. 
+      - $DOMAINNAME_SHB # Passing the domain name to traefik container to be able to use the variable in rules.
     # secrets:
     #   - cf_email
     #   - cf_api_key
