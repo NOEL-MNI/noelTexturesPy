@@ -1,9 +1,9 @@
-<!-- Context: project-intelligence/navigation | Priority: high | Version: 1.0 | Updated: 2026-06-06 -->
+<!-- Context: project-intelligence/navigation | Priority: high | Version: 1.1 | Updated: 2026-06-13 -->
 
 # Project Intelligence — Navigation
 
 **Purpose**: Quick-access index for all context files in this project.
-**Last Updated**: 2026-06-06
+**Last Updated**: 2026-06-13
 
 ---
 

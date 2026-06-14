@@ -51,7 +51,7 @@ python -m pytest tests/test_webapp.py::test_app_initialization -v
 tox -e pytest
 ```
 
-- `test_noelTexturesPy.py` imports `ants` and `antspynet` at **module level** — it errors in envs
+- `test_noelTexturesPy.py` imports `ants` and `antstorch` at **module level** — it errors in envs
   without the `ants` pixi feature. The default `pixi install` env includes ANTs.
 - Pipeline integration tests compare NIfTI outputs against `tests/data/ground-truth/` via
   `ants.image_similarity(metric='Correlation')` with `rtol=atol=0.1`. They are slow (~minutes each).
@@ -105,8 +105,7 @@ Version comes from Git tags via **setuptools-scm**. Never edit `src/noelTextures
   `_`-prefixed instance attributes; `file_processor()` chains all steps in fixed order.
 - **Side effect on import**: importing `image_processing` calls `custom_logger()` at module level,
   which sets `TEMPDIR` in the process environment if it is not already set.
-- **CPU-only TF**: `CUDA_VISIBLE_DEVICES='-1'` and `TF_CPP_MIN_LOG_LEVEL='3'` are set at import
-  time in `image_processing.py`.
+- **CPU-only inference**: `CUDA_VISIBLE_DEVICES='-1'` set at import in `image_processing.py`. PyTorch backend via antstorch.
 - **`ANTS_RANDOM_SEED = '666'`** is hardcoded for pipeline reproducibility.
 - **TEMPDIR**: `TEMPDIR` env var controls the working dir. `custom_logger()` creates one via
   `tempfile.mkdtemp()` if unset. Sub-dirs: `uploads/`, `outputs/`, `qc/`.
