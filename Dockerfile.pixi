@@ -6,17 +6,20 @@ ARG SKIP_TESTS=false
 
 WORKDIR /app
 
+RUN pixi global install git
+
 # copy pixi configuration files and pyproject.toml (needed for editable install)
 COPY pixi.toml pixi.lock pyproject.toml ./
 COPY src ./src
 
 # install dependencies using pixi
 RUN pixi install --locked -e default
+RUN pixi install --locked -e prod
 
-# create the shell-hook bash script to activate the environment
-RUN pixi shell-hook -e default -s bash > /shell-hook
+# create the shell-hook bash script to activate the prod environment
+RUN pixi shell-hook -e prod -s bash > /shell-hook
 
-RUN echo "#!/bin/bash" > /app/entrypoint.sh
+RUN echo "#!/usr/bin/env bash" > /app/entrypoint.sh
 RUN cat /shell-hook >> /app/entrypoint.sh
 # extend the shell-hook script to run the command passed to the container
 RUN echo 'exec "$@"' >> /app/entrypoint.sh
@@ -39,7 +42,7 @@ USER ubuntu
 WORKDIR /app
 
 # only copy the production environment into prod container
-COPY --from=builder /app/.pixi/envs/default /app/.pixi/envs/default
+COPY --from=builder /app/.pixi/envs/prod /app/.pixi/envs/prod
 COPY --from=builder --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
 COPY --from=builder /app/templates /app/templates
 COPY --from=builder /app/src /app/src

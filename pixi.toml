@@ -66,4 +66,5 @@ pytest-xdist = ">=3.8.0, <4"
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
 dev = {features = ["ants", "dev", "test"]}
+prod = {features = ["ants"]}
 default = {features = ["ants", "test"]}
