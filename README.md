@@ -97,8 +97,8 @@ See the [full CLI reference](docs/cli.md) for all options.
 
 ## Run the app (using prebuilt images)
 ```bash
-docker pull noelmni/pynoel-gui-app:latest
-docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
+docker pull noelmni/textures-py:latest
+docker run --rm -p 9999:9999 noelmni/textures-py:latest
 ```
 Access the Web UI at http://localhost:9999
 
@@ -137,7 +137,7 @@ cd noelTexturesPy
 PLATFORMS=linux/arm64,linux/amd64
 TAG=latest
 docker buildx build --push --platform ${PLATFORMS} -t noelmni/pynoel-gui-base:${TAG} base-docker-image/
-docker buildx build --push --platform ${PLATFORMS} -t noelmni/pynoel-gui-app:${TAG} . --build-arg BASE_SHORT_SHA_TAG=${TAG}
+docker buildx build --push --platform ${PLATFORMS} -t noelmni/textures-py:${TAG} . --build-arg BASE_SHORT_SHA_TAG=${TAG}
 ```
 ### Troubleshoot `buildx` errors
 ```bash

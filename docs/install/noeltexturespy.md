@@ -1,4 +1,4 @@
-To install NoelTexturesPy, type: `docker pull noelmni/pynoel-gui-app:latest` to download the latest image. Download needs to be performed only once.
+To install NoelTexturesPy, type: `docker pull noelmni/textures-py:latest` to download the latest image. Download needs to be performed only once.
 
 ![](../assets/media/image8.png)
 
@@ -6,7 +6,7 @@ You can now run noelPyTextures from the terminal or from Docker Desktop.
 
 ### Start noelPyTextures from the terminal
 
-To run the application, type: `docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest`
+To run the application, type: `docker run --rm -p 9999:9999 noelmni/textures-py:latest`
 
 ![](../assets/media/image9.png)
 

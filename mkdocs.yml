@@ -65,7 +65,7 @@ plugins:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - minify:
       minify_html: true
-      
+
 # Customization
 extra:
   annotate:
@@ -74,7 +74,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/NOEL-MNI
     - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/repository/docker/noelmni/pynoel-gui-app
+      link: https://hub.docker.com/repository/docker/noelmni/textures-py
 
 # Extensions
 markdown_extensions:

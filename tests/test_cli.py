@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 import types
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import pytest
 
@@ -14,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Fixture: block ANTs/antspynet imports for every test in this module
+# Fixture: block ANTs/antstorch imports for every test in this module
 # ---------------------------------------------------------------------------
 
 _FIXED_CASE_ID = 'tst_0001'
@@ -41,6 +42,7 @@ def _mock_heavy_deps(monkeypatch):
 # Helper
 # ---------------------------------------------------------------------------
 
+
 def _make_files(tmp_path, *names):
     """Create empty files under tmp_path and return their string paths."""
     paths = []
@@ -54,6 +56,7 @@ def _make_files(tmp_path, *names):
 # ---------------------------------------------------------------------------
 # Parser tests — exercise _build_parser() directly, no sys.argv patching needed
 # ---------------------------------------------------------------------------
+
 
 def test_parser_defaults():
     """Parser should expose correct defaults for all optional arguments."""
@@ -108,15 +111,23 @@ def test_parser_all_flags():
 
     from noelTexturesPy.cli import _build_parser
 
-    args = _build_parser().parse_args([
-        '--t1', 't1.nii',
-        '--t2', 't2.nii',
-        '--case-id', 'sub001',
-        '--output-dir', '/out',
-        '--temp-dir', '/tmp/work',
-        '--template', '/tpl/mni.nii.gz',
-        '--use-n3',
-    ])
+    args = _build_parser().parse_args(
+        [
+            '--t1',
+            't1.nii',
+            '--t2',
+            't2.nii',
+            '--case-id',
+            'sub001',
+            '--output-dir',
+            '/out',
+            '--temp-dir',
+            '/tmp/work',
+            '--template',
+            '/tpl/mni.nii.gz',
+            '--use-n3',
+        ]
+    )
 
     assert args.t1 == 't1.nii'
     assert args.t2 == 't2.nii'
@@ -144,6 +155,7 @@ def test_parser_use_n3_flag():
 # ---------------------------------------------------------------------------
 # Validation tests — main() must reject invalid argument combinations
 # ---------------------------------------------------------------------------
+
 
 def test_main_requires_t1_or_t2():
     """main() should exit with code 2 when neither --t1 nor --t2 is provided."""
@@ -197,11 +209,16 @@ def test_main_missing_template_file(tmp_path):
     (t1,) = _make_files(tmp_path, 't1.nii')
     from noelTexturesPy.cli import main
 
-    with patch('sys.argv', [
-        'textures_cli',
-        '--t1', t1,
-        '--template', '/nonexistent/mni.nii.gz',
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--template',
+            '/nonexistent/mni.nii.gz',
+        ],
+    ):
         with pytest.raises(SystemExit) as exc_info:
             main()
 
@@ -214,6 +231,7 @@ def test_main_missing_template_file(tmp_path):
 # Happy-path tests — Pipeline is called with correct arguments
 # ---------------------------------------------------------------------------
 
+
 def test_main_t1_only(_mock_heavy_deps, tmp_path):
     """main() should call Pipeline with t1 set and t2=None."""
     logger.info('Testing main() with --t1 only')
@@ -224,6 +242,7 @@ def test_main_t1_only(_mock_heavy_deps, tmp_path):
     with patch('sys.argv', ['textures_cli', '--t1', t1, '--template', tpl]):
         with pytest.raises(SystemExit) as exc_info:
             from noelTexturesPy.cli import main
+
             main()
 
     assert exc_info.value.code == 0
@@ -243,11 +262,21 @@ def test_main_t1_and_t2(_mock_heavy_deps, tmp_path):
     t1, t2, tpl = _make_files(tmp_path, 't1.nii', 'flair.nii.gz', 'template.nii.gz')
     fake_pipeline_cls = _mock_heavy_deps
 
-    with patch('sys.argv', [
-        'textures_cli', '--t1', t1, '--t2', t2, '--template', tpl,
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--t2',
+            t2,
+            '--template',
+            tpl,
+        ],
+    ):
         with pytest.raises(SystemExit) as exc_info:
             from noelTexturesPy.cli import main
+
             main()
 
     assert exc_info.value.code == 0
@@ -265,11 +294,21 @@ def test_main_explicit_case_id(_mock_heavy_deps, tmp_path):
     t1, tpl = _make_files(tmp_path, 't1.nii', 'template.nii.gz')
     fake_pipeline_cls = _mock_heavy_deps
 
-    with patch('sys.argv', [
-        'textures_cli', '--t1', t1, '--template', tpl, '--case-id', 'mycase',
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--template',
+            tpl,
+            '--case-id',
+            'mycase',
+        ],
+    ):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     assert fake_pipeline_cls.call_args.kwargs['id'] == 'mycase'
@@ -287,6 +326,7 @@ def test_main_random_case_id_used(_mock_heavy_deps, tmp_path):
     with patch('sys.argv', ['textures_cli', '--t1', t1, '--template', tpl]):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     assert fake_pipeline_cls.call_args.kwargs['id'] == _FIXED_CASE_ID
@@ -302,11 +342,21 @@ def test_main_output_dir_created(_mock_heavy_deps, tmp_path):
     out_dir = str(tmp_path / 'new_output_dir')
     assert not os.path.exists(out_dir)
 
-    with patch('sys.argv', [
-        'textures_cli', '--t1', t1, '--template', tpl, '--output-dir', out_dir,
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--template',
+            tpl,
+            '--output-dir',
+            out_dir,
+        ],
+    ):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     assert os.path.isdir(out_dir), f'Expected output dir to be created: {out_dir}'
@@ -324,11 +374,21 @@ def test_main_temp_dir_sets_env(_mock_heavy_deps, tmp_path):
 
     original_tempdir = os.environ.get('TEMPDIR')
     try:
-        with patch('sys.argv', [
-            'textures_cli', '--t1', t1, '--template', tpl, '--temp-dir', temp_dir,
-        ]):
+        with patch(
+            'sys.argv',
+            [
+                'textures_cli',
+                '--t1',
+                t1,
+                '--template',
+                tpl,
+                '--temp-dir',
+                temp_dir,
+            ],
+        ):
             with pytest.raises(SystemExit):
                 from noelTexturesPy.cli import main
+
                 main()
 
         assert os.environ.get('TEMPDIR') == os.path.abspath(temp_dir)
@@ -348,11 +408,20 @@ def test_main_use_n3_forwarded(_mock_heavy_deps, tmp_path):
     t1, tpl = _make_files(tmp_path, 't1.nii', 'template.nii.gz')
     fake_pipeline_cls = _mock_heavy_deps
 
-    with patch('sys.argv', [
-        'textures_cli', '--t1', t1, '--template', tpl, '--use-n3',
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--template',
+            tpl,
+            '--use-n3',
+        ],
+    ):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     assert fake_pipeline_cls.call_args.kwargs['usen3'] is True
@@ -369,6 +438,7 @@ def test_main_exits_zero_on_success(_mock_heavy_deps, tmp_path):
     with patch('sys.argv', ['textures_cli', '--t1', t1, '--template', tpl]):
         with pytest.raises(SystemExit) as exc_info:
             from noelTexturesPy.cli import main
+
             main()
 
     assert exc_info.value.code == 0
@@ -384,11 +454,21 @@ def test_main_output_dir_forwarded_to_pipeline(_mock_heavy_deps, tmp_path):
     out_dir = str(tmp_path / 'outputs')
     fake_pipeline_cls = _mock_heavy_deps
 
-    with patch('sys.argv', [
-        'textures_cli', '--t1', t1, '--template', tpl, '--output-dir', out_dir,
-    ]):
+    with patch(
+        'sys.argv',
+        [
+            'textures_cli',
+            '--t1',
+            t1,
+            '--template',
+            tpl,
+            '--output-dir',
+            out_dir,
+        ],
+    ):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     assert fake_pipeline_cls.call_args.kwargs['output_dir'] == os.path.abspath(out_dir)
@@ -400,17 +480,21 @@ def test_main_output_dir_forwarded_to_pipeline(_mock_heavy_deps, tmp_path):
 # Error handling tests
 # ---------------------------------------------------------------------------
 
+
 def test_main_oserror_exits_one(_mock_heavy_deps, tmp_path, capsys):
     """OSError from file_processor should cause main() to exit with code 1."""
     logger.info('Testing that OSError in file_processor causes exit(1)')
 
     t1, tpl = _make_files(tmp_path, 't1.nii', 'template.nii.gz')
     fake_pipeline_cls = _mock_heavy_deps
-    fake_pipeline_cls.return_value.file_processor.side_effect = OSError('corrupt weights')
+    fake_pipeline_cls.return_value.file_processor.side_effect = OSError(
+        'corrupt weights'
+    )
 
     with patch('sys.argv', ['textures_cli', '--t1', t1, '--template', tpl]):
         with pytest.raises(SystemExit) as exc_info:
             from noelTexturesPy.cli import main
+
             main()
 
     assert exc_info.value.code == 1
@@ -424,11 +508,14 @@ def test_main_oserror_message_on_stderr(_mock_heavy_deps, tmp_path, capsys):
 
     t1, tpl = _make_files(tmp_path, 't1.nii', 'template.nii.gz')
     fake_pipeline_cls = _mock_heavy_deps
-    fake_pipeline_cls.return_value.file_processor.side_effect = OSError('corrupt weights')
+    fake_pipeline_cls.return_value.file_processor.side_effect = OSError(
+        'corrupt weights'
+    )
 
     with patch('sys.argv', ['textures_cli', '--t1', t1, '--template', tpl]):
         with pytest.raises(SystemExit):
             from noelTexturesPy.cli import main
+
             main()
 
     captured = capsys.readouterr()
@@ -445,6 +532,7 @@ def test_main_oserror_message_on_stderr(_mock_heavy_deps, tmp_path, capsys):
 # ---------------------------------------------------------------------------
 # Module-level / structural tests
 # ---------------------------------------------------------------------------
+
 
 def test_module_main_is_callable():
     """noelTexturesPy.cli.main should be a callable."""

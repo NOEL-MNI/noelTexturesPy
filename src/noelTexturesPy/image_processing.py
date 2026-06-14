@@ -20,9 +20,6 @@ from noelTexturesPy.custom_logging import custom_logger
 from noelTexturesPy.utils import compute_RI
 from noelTexturesPy.utils import peakfinder
 
-# reduce tensorflow logging verbosity
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
 os.environ['ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS'] = str(multiprocessing.cpu_count())
 os.environ['ANTS_RANDOM_SEED'] = '666'
 
@@ -160,9 +157,9 @@ class noelTexturesPy:
             self._mask = self.brain_extraction()
 
         ants.image_write(
-                self._mask,
-                os.path.join(self._outputdir, self._id + '_brainmask.nii'),
-            )
+            self._mask,
+            os.path.join(self._outputdir, self._id + '_brainmask.nii'),
+        )
 
     def segmentation(self):
         self._logger.info('computing GM, WM, CSF segmentation')
@@ -190,9 +187,9 @@ class noelTexturesPy:
             self._wm = np.where((self._segm.numpy() == 3), 1, 0).astype('float32')
 
         ants.image_write(
-                self._segm,
-                os.path.join(self._outputdir, self._id + '_segmentation.nii'),
-            )
+            self._segm,
+            os.path.join(self._outputdir, self._id + '_segmentation.nii'),
+        )
 
     def gradient_magnitude(self):
         self._logger.info('computing gradient magnitude')
@@ -317,7 +314,7 @@ class noelTexturesPy:
             image = self._t2_n4
         else:
             sys.exit('invalid contrast specified for brain extraction')
-        # modality → antspynet network ID and weights filename (cached in ~/.antstorch/)
+        # modality → weights filename (cached in ~/.antstorch/)
         _WEIGHTS_ID = {
             't1': 'brainExtractionRobustT1_pytorch',
             't2': 'brainExtractionRobustT2_pytorch',
@@ -325,14 +322,16 @@ class noelTexturesPy:
         try:
             prob = brain_extraction(image, modality=self._modality)
         except OSError as exc:
-            from antspynet.utilities import (
-                get_antsxnet_cache_directory,  # noqa: PLC0415
-            )
-            from antspynet.utilities import get_pretrained_network  # noqa: PLC0415
+            from antstorch.utilities import (
+                get_antstorch_cache_directory,
+            )  # type: ignore[import-untyped]
+            from antstorch.utilities import (
+                get_pretrained_network,
+            )  # type: ignore[import-untyped]
 
-            cache_dir = get_antsxnet_cache_directory()
+            cache_dir = get_antstorch_cache_directory()
             weights_id = _WEIGHTS_ID.get(self._modality, '')
-            weights_path = os.path.join(cache_dir, weights_id + '.h5')
+            weights_path = os.path.join(cache_dir, weights_id + '.pt')
             if weights_id and os.path.isfile(weights_path):
                 self._logger.warning(
                     'Corrupt brain-extraction weights detected at '
@@ -340,7 +339,7 @@ class noelTexturesPy:
                 )
                 print(
                     'Corrupt brain-extraction weights detected — '
-                    'deleting and re-downloading from ANTsXNet cache...'
+                    'deleting and re-downloading from ANTsTorch cache...'
                 )
                 os.remove(weights_path)
                 get_pretrained_network(weights_id)
@@ -351,7 +350,7 @@ class noelTexturesPy:
                         f'Brain-extraction model weights could not be loaded '
                         f'(modality={self._modality!r}).',
                         f'  Expected cache file : {weights_path}',
-                        f'  h5py reported       : {exc}',
+                        f'  OSError reported    : {exc}',
                     ]
                 )
                 self._logger.error(msg)

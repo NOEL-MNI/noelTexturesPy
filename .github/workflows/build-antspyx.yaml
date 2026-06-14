@@ -55,7 +55,7 @@ jobs:
 
       - uses: prefix-dev/setup-pixi@v0.9.6
         with:
-          pixi-version: v0.70.1
+          pixi-version: v0.70.2
           auth-host: prefix.dev
           auth-token: ${{ secrets.PREFIX_API_KEY }}
           environments: build-ants
@@ -112,7 +112,7 @@ jobs:
 
       - uses: prefix-dev/setup-pixi@v0.9.6
         with:
-          pixi-version: v0.70.1
+          pixi-version: v0.70.2
           auth-host: prefix.dev
           auth-token: ${{ secrets.PREFIX_API_KEY }}
           environments: build-ants
