@@ -89,7 +89,7 @@ isort `force-single-line = true`, `preview = true`.
 ```bash
 python -m build --wheel --sdist   # or: uv build --wheel --sdist
 make build TAG=latest              # Docker multi-arch (pushes to registry)
-docker build -f Dockerfile.pixi -t noelmni/textures-py:test .
+docker build -t noelmni/textures-py:test .
 ```
 
 Version comes from Git tags via **setuptools-scm**. Never edit `src/noelTexturesPy/_version.py`.

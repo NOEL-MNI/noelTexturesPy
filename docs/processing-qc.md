@@ -21,7 +21,7 @@ Once the procedure is finished, links to the results become available in the "Te
     - Prefix_t1_gradient_magnitude.nii.gz: gradient magnitude derived from the t1w image
     - Prefix_t1_relative_intensity.nii.gz: relative intensity derived from the t1w image
     - Prefix_QC_report.pdf: PDF report to check the accuracy of the different processing steps
-    
+
     Typically, the pipeline takes about 3-10 minutes (depending on the CPU core count) to run, and files will appear once all the relevant outputs have been generated.
 
 ![](./assets/media/image19.png)
@@ -32,7 +32,7 @@ Once the procedure is finished, links to the results become available in the "Te
 To process another case, shut the container down (Ctrl-C in the
 terminal) and restart noelTexturesPy using the command:
 ```
-docker run --rm -p 9999:9999 noelmni/pynoel-gui-app:latest
+docker run --rm -p 9999:9999 noelmni/textures-py:latest
 ```
 
 Alternatively, hit the restart button corresponding to the container in
