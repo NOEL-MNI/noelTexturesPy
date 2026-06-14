@@ -9,7 +9,7 @@ pixi install -e dev   # dev env also adds pre-commit, mypy, datalad
 
 - Platforms: `linux-64`, `linux-aarch64`, `osx-arm64` only — no Windows, no `osx-x86_64`.
 - `.envrc` uses direnv + pixi shell-hook. Run `direnv allow` once to auto-activate the pixi env.
-- `conda-lock.yml` / `environment.yml` / `uv.lock` are fallback options; pixi is the CI-tested path.
+- `uv.lock` is a fallback option; pixi is the CI-tested path.
 
 ---
 
