@@ -10,7 +10,7 @@ import time
 import ants  # type: ignore[import-untyped]
 import matplotlib.pyplot as plt
 import numpy as np
-from antspynet.utilities import brain_extraction  # type: ignore[import-untyped]
+from antstorch.utilities import brain_extraction  # type: ignore[import-untyped]
 from matplotlib.backends.backend_pdf import PdfPages
 
 # import zipfile
@@ -317,10 +317,10 @@ class noelTexturesPy:
             image = self._t2_n4
         else:
             sys.exit('invalid contrast specified for brain extraction')
-        # modality → antspynet network ID and weights filename (cached in ~/.keras/ANTsXNet/)
+        # modality → antspynet network ID and weights filename (cached in ~/.antstorch/)
         _WEIGHTS_ID = {
-            't1': 'brainExtractionRobustT1',
-            't2': 'brainExtractionRobustT2',
+            't1': 'brainExtractionRobustT1_pytorch',
+            't2': 'brainExtractionRobustT2_pytorch',
         }
         try:
             prob = brain_extraction(image, modality=self._modality)

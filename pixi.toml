@@ -40,7 +40,12 @@ chart-studio = ">=1.1.0, <2"
 
 [feature.ants]
 channels = [ "https://repo.prefix.dev/noel-forge", {channel = "main", priority = -1}]
-dependencies = { antspyx = ">=0.6.3,<0.7", antspynet = ">=0.3.2,<0.4" }
+dependencies = { antspyx = ">=0.6.3,<0.7" }
+tasks = {download-models = { cmd = "python download-models.py", default-environment = "ants", cwd = "scripts" }}
+
+[feature.ants.pypi-dependencies]
+antstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps"}
+# antstorch = { path = "./deps/ANTsTorch", editable = true}
 
 [feature.build-ants.dependencies]
 rattler-build = ">=0.66.0,<0.67"
@@ -49,7 +54,7 @@ rattler-build = ">=0.66.0,<0.67"
 datalad = ">=1.6.0, <2"
 
 [feature.dev.dependencies]
-pre-commit = ">=4.6.0,<5"
+prek = ">=0.4.4, <1"
 
 [feature.test.pypi-dependencies]
 mypy = ">=2.1.0, <3"
@@ -61,4 +66,5 @@ pytest-xdist = ">=3.8.0, <4"
 [environments]
 build-ants = {features = ["build-ants"], no-default-feature = true}
 dev = {features = ["ants", "dev", "test"]}
+prod = {features = ["ants"]}
 default = {features = ["ants", "test"]}

@@ -1,4 +1,4 @@
-FROM ghcr.io/prefix-dev/pixi:0.70.1 AS builder
+FROM ghcr.io/prefix-dev/pixi:0.70.2 AS builder
 LABEL maintainer=<ravnoor@gmail.com>
 
 # set variable for conditional test execution
@@ -6,23 +6,29 @@ ARG SKIP_TESTS=false
 
 WORKDIR /app
 
+RUN pixi global install git
+
 # copy pixi configuration files and pyproject.toml (needed for editable install)
 COPY pixi.toml pixi.lock pyproject.toml ./
 COPY src ./src
 
 # install dependencies using pixi
 RUN pixi install --locked -e default
+RUN pixi install --locked -e prod
 
-# create the shell-hook bash script to activate the environment
-RUN pixi shell-hook -e default -s bash > /shell-hook
+# create the shell-hook bash script to activate the prod environment
+RUN pixi shell-hook -e prod -s bash > /shell-hook
 
-RUN echo "#!/bin/bash" > /app/entrypoint.sh
+RUN echo "#!/usr/bin/env bash" > /app/entrypoint.sh
 RUN cat /shell-hook >> /app/entrypoint.sh
 # extend the shell-hook script to run the command passed to the container
 RUN echo 'exec "$@"' >> /app/entrypoint.sh
 
 # copy the rest of the application
 COPY . .
+
+# download pretrained models using pixi task
+RUN pixi run download-models
 
 # run tests if SKIP_TESTS is not true
 RUN if [ "${SKIP_TESTS}" != "true" ]; then \
@@ -32,15 +38,16 @@ RUN if [ "${SKIP_TESTS}" != "true" ]; then \
 # production image
 FROM ubuntu:24.04 AS production
 ENV TZ=America/Montreal
-
+USER ubuntu
 WORKDIR /app
 
 # only copy the production environment into prod container
-COPY --from=builder /app/.pixi/envs/default /app/.pixi/envs/default
+COPY --from=builder /app/.pixi/envs/prod /app/.pixi/envs/prod
 COPY --from=builder --chmod=0755 /app/entrypoint.sh /app/entrypoint.sh
 COPY --from=builder /app/templates /app/templates
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/pyproject.toml /app/pyproject.toml
+COPY --from=builder --chown=ubuntu:ubuntu /root/.antstorch /home/ubuntu/.antstorch
 
 EXPOSE 9999
 
