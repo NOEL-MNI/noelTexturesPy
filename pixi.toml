@@ -54,7 +54,7 @@ rattler-build = ">=0.66.0,<0.67"
 datalad = ">=1.6.0, <2"
 
 [feature.dev.dependencies]
-pre-commit = ">=4.6.0,<5"
+prek = ">=0.4.4, <1"
 
 [feature.test.pypi-dependencies]
 mypy = ">=2.1.0, <3"
