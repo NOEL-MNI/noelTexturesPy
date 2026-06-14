@@ -54,5 +54,15 @@ repos:
       - id: pyproject-fmt
 
 
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.1.0
+    hooks:
+      - id: mypy
+        args: [--install-types, --non-interactive]
+        additional_dependencies:
+          - types-Pillow
+        pass_filenames: false
+        entry: mypy src
+
 ci:
   autoupdate_commit_msg: autoupdate pre-commit hooks
