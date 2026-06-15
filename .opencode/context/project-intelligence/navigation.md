@@ -1,9 +1,9 @@
-<!-- Context: project-intelligence/navigation | Priority: high | Version: 1.1 | Updated: 2026-06-13 -->
+<!-- Context: project-intelligence/navigation | Priority: high | Version: 1.2 | Updated: 2026-06-14 -->
 
 # Project Intelligence — Navigation
 
 **Purpose**: Quick-access index for all context files in this project.
-**Last Updated**: 2026-06-13
+**Last Updated**: 2026-06-14
 
 ---
 
@@ -23,7 +23,7 @@
 
 | File | Description | Priority | Version |
 |------|-------------|----------|---------|
-| `technical-domain.md` | Tech stack, code patterns, naming, standards, security | critical | 1.0 |
+| `technical-domain.md` | Tech stack, code patterns, naming, standards, security | critical | 1.2 |
 
 ---
 
@@ -38,3 +38,14 @@ tox -e format              # ruff format check
 tox -e types               # mypy type check
 pre-commit run --all-files # run all pre-commit hooks
 ```
+
+---
+
+## Installation Paths
+
+| Method | Command | Use case |
+|--------|---------|----------|
+| Pixi (local) | `pixi install && pixi run app` | Development |
+| Docker | `docker run --rm -p 9999:9999 noelmni/textures-py:latest` | Production / quick start |
+
+**Deprecated**: conda / micromamba / conda-lock — no longer supported.

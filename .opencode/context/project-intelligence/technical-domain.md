@@ -1,9 +1,9 @@
-<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.1 | Updated: 2026-06-13 -->
+<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.2 | Updated: 2026-06-14 -->
 
 # Technical Domain
 
 **Purpose**: Tech stack, architecture, development patterns for noelTexturesPy.
-**Last Updated**: 2026-06-13
+**Last Updated**: 2026-06-14
 **Update Triggers**: Tech stack changes | New patterns | Architecture decisions
 **Audience**: Developers, AI coding agents
 
@@ -19,8 +19,11 @@
 | MRI Processing | ANTsPy + ANTsTorch | ≥ 0.6.2 / PyTorch-based | Custom channel: prefix.dev/noel-forge |
 | Numerics | NumPy + SciPy + Pandas | ≥ 2.4.6 / ≥ 1.15.2 / ≥ 3.0.3 | |
 | Visualization | Matplotlib | ≥ 3.10.9 | QC PDF generation |
-| Package manager | Pixi (recommended) | — | `pixi install` / `pixi run <task>` |
+| Package manager | Pixi | — | `pixi install` / `pixi run <task>` — only supported local path |
+| Container | Docker | — | `docker pull noelmni/textures-py:latest` — pixi-based Dockerfile |
 | Build | setuptools-scm | version from git tags | Never edit `_version.py` |
+
+**Deprecated**: conda / micromamba / conda-lock are no longer supported. Use Pixi or Docker.
 
 ---
 
@@ -157,6 +160,7 @@ class noelTexturesPy:
 | Logger factory | `src/noelTexturesPy/custom_logging.py` | TEMPDIR setup + rotating log |
 | Tool config | `pyproject.toml` | Ruff, mypy, pytest, setuptools-scm |
 | Tasks | `pixi.toml` | `app`, `test`, `test-unit`, `test-webapp` |
+| Docker build | `Dockerfile` | Pixi-based multi-stage build |
 
 ## Related Context Files
 

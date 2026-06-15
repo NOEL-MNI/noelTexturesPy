@@ -7,9 +7,8 @@ Dash app to generate textures maps from MRI using Advanced Normalization Tools (
 <hr>
 
 ## Prerequisites
-- [Pixi](https://pixi.sh) (for pixi-based installation, preferred method for local installation)
+- [Pixi](https://pixi.sh) (for local installation)
 - [Docker](https://www.docker.com/get-started) (for Docker installation)
-- [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) (for legacy conda-based installations)
 
 ### Installing Pixi
 ```bash
@@ -18,44 +17,17 @@ curl -fsSL https://pixi.sh/install.sh | sh
 
 # Alternative methods:
 # Homebrew (macOS): brew install pixi
-# Conda-forge: conda install -c conda-forge pixi
 
 # Add pixi to your PATH (if not automatically added)
 export PATH="$HOME/.pixi/bin:$PATH"
 echo 'export PATH="$HOME/.pixi/bin:$PATH"' >> ~/.bashrc
 ```
 
-### Installing Micromamba
-```bash
-# Linux/macOS
-mkdir -p ~/bin
-# Download micromamba binary on Linux
-curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj ~/bin/micromamba
-# Download micromamba binary on macOS
-# For Intel Macs (osx-64)
-curl -Ls https://micro.mamba.pm/api/micromamba/osx-64/latest | tar -xvj ~/bin/micromamba
-# For Apple Silicon Macs (osx-arm64)
-curl -Ls https://micro.mamba.pm/api/micromamba/osx-arm64/latest | tar -xvj ~/bin/micromamba
-
-# Add micromamba to your PATH
-export PATH=~/bin:$PATH
-echo 'export PATH=~/bin:$PATH' >> ~/.bashrc
-# Initialize micromamba shell
-mkdir -p ~/micromamba
-export MAMBA_ROOT_PREFIX=~/micromamba
-echo 'export MAMBA_ROOT_PREFIX=~/micromamba' >> ~/.bashrc
-eval "$(micromamba shell hook -s posix)"
-
-# Or using package managers:
-# Homebrew (macOS): brew install micromamba
-# Conda-forge: conda install -c conda-forge micromamba
-```
-
 OS specific installation instructions: https://github.com/NOEL-MNI/noelTexturesPy/wiki/Installation
 
 
 ## Local Installation with Pixi
-For local development using pixi (modern conda-compatible package manager):
+For local development using pixi:
 
 ```bash
 # Clone the repository
@@ -104,31 +76,6 @@ Access the Web UI at http://localhost:9999
 
 ![Usage noelTexturesPy GIF](images/textures.gif)
 
-## Local Installation with Micromamba
-For local development and usage, you can install the app using micromamba:
-
-```bash
-# Clone the repository
-git clone https://github.com/NOEL-MNI/noelTexturesPy.git
-cd noelTexturesPy
-
-# Create conda environment from lock file
-micromamba create --name pytextures --file conda-lock.yml --yes
-# conda create --name pytextures --file conda-lock.yml --yes
-
-# Activate the environment
-micromamba activate pytextures
-# conda activate pytextures
-
-# Install the package in editable mode
-pip install -editable .
-
-# Run the application
-textures_app --port 9999
-```
-
-Access the Web UI at http://localhost:9999
-
 ## Build the app
 #### M1 Apple Silicon supported/tested, M2, M3, M4 untested as of 01-July-2025 (but will likely work without issues)
 ```bash
@@ -149,8 +96,8 @@ docker buildx inspect --bootstrap
 ## Required inputs
 Please ensure the file(s) are renamed accordingly before uploading it to `noelTexturesPy`.
 ```
-- T1-weighted image must include the string “t1” or “T1” in its filename, and/or
-- T2-weighted (or FLAIR) image must include either “t2”, “T2”, “flair”, or “FLAIR”
+- T1-weighted image must include the string "t1" or "T1" in its filename, and/or
+- T2-weighted (or FLAIR) image must include either "t2", "T2", "flair", or "FLAIR"
 ```
 
 <hr>

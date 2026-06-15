@@ -37,12 +37,8 @@ multiarch-manifest:
 	docker manifest create $(ACCOUNT)/$(SVC_1):$(TAG) --amend $(ACCOUNT)/$(SVC_1):$(TAG)_amd64 $(ACCOUNT)/$(SVC_1):$(TAG)_arm64
 	docker manifest push $(ACCOUNT)/$(SVC_1):$(TAG)
 
-skopeo-copy:
-	alias skopeo='docker run -it --rm quay.io/skopeo/stable:latest'
-	skopeo copy --multi-arch all docker://noelmni/antspynet:latest docker://noelmni/antspynet:$(BRANCH)-$(SHA_TAG) --dest-creds $(USERNAME):$(PASSWORD) 
-
 update-requirements:
-	docker run --rm -it --entrypoint /opt/conda/bin/python $(ACCOUNT)/$(SVC_1):$(TAG) -m pip list --format=freeze
+	docker run --rm -it --entrypoint python $(ACCOUNT)/$(SVC_1):$(TAG) -m pip list --format=freeze
 
 run-build:
 	docker run --rm -p 9999:9999 $(ACCOUNT)/$(SVC_1):$(TAG)
@@ -60,7 +56,7 @@ build-wheel:
 	python -m build --wheel
 
 dev-image: build-wheel
-	docker build -t noelmni/pynoel-gui-app:test-mamba -f Dockerfile .
+	docker build -t noelmni/textures-py:dev -f Dockerfile .
 
 prod-image: build-wheel
-	docker buildx build --push --platform linux/arm64,linux/amd64 -t noelmni/pynoel-gui-app:master-58b19c9-mamba .
+	docker buildx build --push --platform linux/arm64,linux/amd64 -t noelmni/textures-py:prod .
