@@ -120,3 +120,29 @@ Version comes from Git tags via **setuptools-scm**. Never edit `src/noelTextures
 - Code-quality (`code-quality.yml`): `main` push/PR and daily cron — uses `tox` via `uv`.
 - Release: push a `v*` tag → publish to PyPI + push multi-arch Docker image.
 - Required secrets: `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `PREFIX_API_KEY`.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+
+## Memory (mnemosyne)
+
+- At the start of a session, use memory_recall and memory_recall_global to search for context
+  relevant to the user's first message.
+- After significant decisions, use memory_store to save a concise summary.
+- Delete contradicted memories with memory_delete before storing updated ones.
+- Use memory_recall_global / memory_store_global for cross-project preferences.
+- Mark critical, always-relevant context as core (core=true) — but use sparingly.
+- When you are done with a session, store any memories that you think are relevant
+  to the user and the project. This will help you recall important information in
+  future sessions.
