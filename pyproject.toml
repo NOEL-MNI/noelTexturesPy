@@ -89,3 +89,29 @@ overrides = [
 ini_options.testpaths = [ "tests" ]
 ini_options.pythonpath = [ "src" ]
 ini_options.addopts = [ "-n", "auto", "-v" ]
+
+[tool.tox]
+env_list = [ "format", "lint", "pytest", "types" ]
+env.format.commands = [ [ "ruff", "format", "--diff" ] ]
+env.format.deps = [ "ruff" ]
+env.format.description = "Run code formatter"
+env.format.skip_install = true
+env.lint.commands = [ [ "ruff", "check" ] ]
+env.lint.deps = [ "ruff" ]
+env.lint.description = "Run code linter"
+env.lint.skip_install = true
+env.pytest.commands = [
+  [ "pytest", "--durations=0", "--capture=no", "--cov=noelTexturesPy", "--cov-report=xml", "{posargs}" ],
+]
+env.pytest.deps = [
+  "matplotlib",
+  "parameterized",
+  "Pillow",
+  "pytest",
+  "pytest-cov",
+  "pytest-sugar",
+]
+env.types.commands = [
+  [ "mypy", "--install-types", "--non-interactive", "src" ],
+]
+env.types.deps = [ "mypy", "pip" ]
