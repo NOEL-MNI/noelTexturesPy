@@ -13,8 +13,8 @@ COPY pixi.toml pixi.lock pyproject.toml ./
 COPY src ./src
 
 # install dependencies using pixi
-RUN pixi install --locked -e default
-RUN pixi install --locked -e prod
+RUN pixi install --frozen -e default
+RUN pixi install --frozen -e prod
 
 # create the shell-hook bash script to activate the prod environment
 RUN pixi shell-hook -e prod -s bash > /shell-hook

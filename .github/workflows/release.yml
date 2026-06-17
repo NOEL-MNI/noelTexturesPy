@@ -1,0 +1,176 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: ["Test with Pixi"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ── 1. Semantic Release ────────────────────────────────────────────────
+  release:
+    name: Semantic Release
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository (full history for PSR)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Force branch to workflow SHA
+        run: git reset --hard ${{ github.sha }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
+        with:
+          enable-cache: true
+
+      - name: Setup Pixi
+        uses: prefix-dev/setup-pixi@v0.9.6
+        with:
+          pixi-version: v0.70.2
+          cache: true
+
+      - name: Configure git committer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # PSR stamps version in pyproject.toml, pixi.toml, __init__.py
+      # then runs build_command, then commits + tags + pushes
+      - name: Semantic Version Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v10.5.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_committer_name: "github-actions[bot]"
+          git_committer_email: "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # Regenerate lock files AFTER release commit is pushed
+      - name: Regenerate lock files
+        if: steps.release.outputs.released == 'true'
+        run: |
+          # Fetch the release commit PSR pushed (avoid TOCTOU race with pull)
+          git fetch origin main
+          git reset --hard origin/main
+
+          # Regenerate lock files with new version
+          pixi install --locked || pixi install
+          uv lock
+
+          # Commit lock file updates as a follow-up chore
+          git add pixi.lock uv.lock
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(release): update lock files for v${{ steps.release.outputs.version }}"
+            git push origin main
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/*
+          if-no-files-found: error
+
+    outputs:
+      released: ${{ steps.release.outputs.released || 'false' }}
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+
+  # ── 2. Publish to PyPI ────────────────────────────────────────────────
+  pypi:
+    name: Publish to PyPI
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: dist
+          path: dist
+
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+          verbose: true
+          print-hash: true
+
+  # ── 3. Build & Push Docker Image ──────────────────────────────────────
+  docker:
+    name: Publish Docker Image
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.release.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: |
+            noelmni/textures-py
+            noelmni/pynoel-gui-app
+          tags: |
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.version }}
+            type=semver,pattern=v{{version}},value=${{ needs.release.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.release.outputs.version }}
+            type=semver,pattern={{major}},value=${{ needs.release.outputs.version }}
+            type=raw,value=latest
+            type=sha,prefix=sha-
+          labels: |
+            org.opencontainers.image.title=noelTexturesPy
+            org.opencontainers.image.description=Dash app to generate texture maps from MRI using Advanced Normalization Tools
+            org.opencontainers.image.vendor=Neuroimaging of Epilepsy Laboratory at McGill University
+            org.opencontainers.image.version=${{ needs.release.outputs.version }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            SKIP_TESTS=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
