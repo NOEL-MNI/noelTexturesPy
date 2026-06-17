@@ -83,6 +83,9 @@ overrides = [
   { module = "dash.*", ignore_missing_imports = true },
   { module = "ants.*", ignore_missing_imports = true },
   { module = "antstorch.*", ignore_missing_imports = true },
+  { module = "numpy.*", ignore_missing_imports = true },
+  { module = "matplotlib.*", ignore_missing_imports = true },
+  { module = "flask.*", ignore_missing_imports = true },
 ]
 
 [tool.pytest]
