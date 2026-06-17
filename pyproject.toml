@@ -1,9 +1,10 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [ "setuptools>=75", "setuptools-scm[toml]>=8" ]
+requires = [ "setuptools>=75" ]
 
 [project]
 name = "noel-textures-py"
+version = "0.2.3"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
 keywords = [ "ANTsPy", "Dash", "MRI", "texture maps" ]
@@ -20,7 +21,6 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-dynamic = [ "version" ]
 dependencies = [
   "dash>=3.3,<5",
   "dash-bootstrap-components>=2.0.4,<3",
@@ -50,11 +50,6 @@ packages.find.where = [ "src" ]
 packages.find.include = [ "noelTexturesPy*" ]
 packages.find.exclude = [ ".github*", ".pixi*", "build*", "docker*", "docs*", "images*", "templates*", "web*" ]
 include-package-data = false
-
-[tool.setuptools_scm]
-version_scheme = "no-guess-dev"
-fallback_version = "0.2.2"
-write_to = "src/noelTexturesPy/_version.py"
 
 [tool.uv]
 sources.anstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps" }
