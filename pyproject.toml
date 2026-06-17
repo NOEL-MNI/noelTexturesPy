@@ -113,3 +113,36 @@ env.types.commands = [
   [ "mypy", "--install-types", "--non-interactive", "src" ],
 ]
 env.types.deps = [ "mypy", "pip" ]
+
+# ── python-semantic-release ──────────────────────────────────────────────
+[tool.semantic_release]
+tag_format = "v{version}"
+major_on_zero = false
+allow_zero_version = true
+version_variables = [
+  "src/noelTexturesPy/__init__.py:__version__",
+]
+version_toml = [
+  "pixi.toml:workspace.version",
+  "pyproject.toml:project.version",
+]
+build_command = "uv build --sdist --wheel ."
+commit_message = "chore(release): v{version}"
+commit_parser = "conventional"
+branches.main.match = "main"
+branches.main.prerelease = false
+changelog.default_templates.changelog_file = "CHANGELOG.md"
+changelog.default_templates.mask_initial_release = true
+changelog.default_templates.output_format = "md"
+changelog.exclude_commit_patterns = [
+  'chore(?:\([^)]*?\))?: .+',
+  'ci(?:\([^)]*?\))?: .+',
+  'refactor(?:\([^)]*?\))?: .+',
+  'style(?:\([^)]*?\))?: .+',
+  'test(?:\([^)]*?\))?: .+',
+  'build\((?!deps: .+)\)',
+  "Initial [Cc]ommit.*",
+]
+changelog.mode = "update"
+remote.token = { env = "GH_TOKEN" }
+remote.type = "github"
