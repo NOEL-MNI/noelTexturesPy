@@ -1,26 +1,24 @@
-name: Publish Docker image
+name: Dev Docker Image
 
 on:
-  # trigger on release events
-  release:
-    types: [published]
-  # trigger on tags matching version patterns
   push:
-    tags:
-      - "v*"
-  # manual trigger
-  workflow_dispatch:
-    inputs:
-      context:
-        description: "manual trigger"
-        required: false
+    branches:
+      - dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  push_to_registry:
-    name: Push Docker textures-py image to Docker Hub
+  docker:
+    name: Build & Push Dev Docker Image
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out the repository
+      - name: Checkout repository
         uses: actions/checkout@v6
 
       - name: Set up QEMU
@@ -35,17 +33,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Determine branch name (non-PR events)
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-
-      - name: Determine branch name (PR events)
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v6
         with:
@@ -53,17 +41,14 @@ jobs:
             noelmni/textures-py
             noelmni/pynoel-gui-app
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern=v{{version}}
-            type=sha,prefix=${{ env.BRANCH_NAME }}-
-            type=raw,value=${{ env.BRANCH_NAME }}-latest
-            type=raw,value=latest
+            type=raw,value=dev
+            type=sha,prefix=dev-
           labels: |
             org.opencontainers.image.title="noelTexturesPy"
             org.opencontainers.image.description="Dash app to generate texture maps from MRI using Advanced Normalization Tools"
             org.opencontainers.image.vendor="Neuroimaging of Epilepsy Laboratory at McGill University"
 
-      - name: Build and push Docker image to registry
+      - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -73,3 +58,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             SKIP_TESTS=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
