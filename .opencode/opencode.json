@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      ".worktrees/**": "allow"
+    },
+    "grep": "allow",
+    "read": "allow",
+    "edit": "allow",
+    "bash": {
+      "rm -rf *": "deny",
+      "git push *": "deny",
+      "rtk rm *": "deny",
+      "rtk git push *": "deny"
+    },
+  },
+  "plugin": [
+    "rtk",
+    ".opencode/plugins/graphify.js",
+    "opencode-mnemosyne"
+  ]
+}

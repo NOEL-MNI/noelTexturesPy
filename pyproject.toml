@@ -1,9 +1,10 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [ "setuptools>=75", "setuptools-scm[toml]>=8" ]
+requires = [ "setuptools>=75" ]
 
 [project]
 name = "noel-textures-py"
+version = "0.2.3"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
 keywords = [ "ANTsPy", "Dash", "MRI", "texture maps" ]
@@ -20,7 +21,6 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-dynamic = [ "version" ]
 dependencies = [
   "dash>=3.3,<5",
   "dash-bootstrap-components>=2.0.4,<3",
@@ -51,11 +51,6 @@ packages.find.include = [ "noelTexturesPy*" ]
 packages.find.exclude = [ ".github*", ".pixi*", "build*", "docker*", "docs*", "images*", "templates*", "web*" ]
 include-package-data = false
 
-[tool.setuptools_scm]
-version_scheme = "no-guess-dev"
-fallback_version = "0.2.2"
-write_to = "src/noelTexturesPy/_version.py"
-
 [tool.uv]
 sources.anstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps" }
 
@@ -83,9 +78,71 @@ overrides = [
   { module = "dash.*", ignore_missing_imports = true },
   { module = "ants.*", ignore_missing_imports = true },
   { module = "antstorch.*", ignore_missing_imports = true },
+  { module = "numpy.*", ignore_missing_imports = true },
+  { module = "matplotlib.*", ignore_missing_imports = true },
+  { module = "flask.*", ignore_missing_imports = true },
 ]
 
 [tool.pytest]
 ini_options.testpaths = [ "tests" ]
 ini_options.pythonpath = [ "src" ]
 ini_options.addopts = [ "-n", "auto", "-v" ]
+
+[tool.tox]
+env_list = [ "format", "lint", "pytest", "types" ]
+env.format.commands = [ [ "ruff", "format", "--diff" ] ]
+env.format.deps = [ "ruff" ]
+env.format.description = "Run code formatter"
+env.format.skip_install = true
+env.lint.commands = [ [ "ruff", "check" ] ]
+env.lint.deps = [ "ruff" ]
+env.lint.description = "Run code linter"
+env.lint.skip_install = true
+env.pytest.commands = [
+  [ "pytest", "--durations=0", "--capture=no", "--cov=noelTexturesPy", "--cov-report=xml", "{posargs}" ],
+]
+env.pytest.deps = [
+  "matplotlib",
+  "parameterized",
+  "Pillow",
+  "pytest",
+  "pytest-cov",
+  "pytest-sugar",
+]
+env.types.commands = [
+  [ "mypy", "--install-types", "--non-interactive", "src" ],
+]
+env.types.deps = [ "mypy", "pip" ]
+
+# ── python-semantic-release ──────────────────────────────────────────────
+[tool.semantic_release]
+tag_format = "v{version}"
+major_on_zero = false
+allow_zero_version = true
+version_variables = [
+  "src/noelTexturesPy/__init__.py:__version__",
+]
+version_toml = [
+  "pixi.toml:workspace.version",
+  "pyproject.toml:project.version",
+]
+build_command = "uv build --sdist --wheel ."
+commit_message = "chore(release): v{version}"
+commit_parser = "conventional"
+branches.main.match = "main"
+branches.main.prerelease = false
+changelog.default_templates.changelog_file = "CHANGELOG.md"
+changelog.default_templates.mask_initial_release = true
+changelog.default_templates.output_format = "md"
+changelog.exclude_commit_patterns = [
+  'chore(?:\([^)]*?\))?: .+',
+  'ci(?:\([^)]*?\))?: .+',
+  'refactor(?:\([^)]*?\))?: .+',
+  'style(?:\([^)]*?\))?: .+',
+  'test(?:\([^)]*?\))?: .+',
+  'build\((?!deps: .+)\)',
+  "Initial [Cc]ommit.*",
+]
+changelog.mode = "update"
+remote.token = { env = "GH_TOKEN" }
+remote.type = "github"

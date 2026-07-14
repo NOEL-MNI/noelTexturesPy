@@ -48,7 +48,9 @@ if not os.path.exists(upload_directory):
 # we can create a route for downloading files directly:
 server = Flask(__name__)
 app = Dash(
-    server=server, external_stylesheets=[dbc.themes.BOOTSTRAP], assets_folder='assets'
+    server=server,  # type: ignore[arg-type]  # Dash runtime accepts Flask; stubs are stale
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    assets_folder='assets',
 )
 app.title = 'noelTexturesPy'
 

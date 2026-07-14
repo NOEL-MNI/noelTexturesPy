@@ -3,7 +3,6 @@ name: Build and Upload Conda Packages
 on:
   push:
     branches:
-      - master
       - dev
       - 'feature/build*'
       - 'build/*'
@@ -14,7 +13,7 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'recipes/**'
       - '.github/workflows/build-antspyx.yaml'
