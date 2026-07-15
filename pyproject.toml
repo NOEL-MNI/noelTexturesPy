@@ -126,7 +126,7 @@ version_toml = [
   "pixi.toml:workspace.version",
   "pyproject.toml:project.version",
 ]
-build_command = "uv build --sdist --wheel ."
+build_command = "pixi exec uv build --sdist --wheel ."
 commit_message = "chore(release): v{version}"
 commit_parser = "conventional"
 branches.main.match = "main"
