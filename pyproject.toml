@@ -4,7 +4,7 @@ requires = [ "setuptools>=75" ]
 
 [project]
 name = "noel-textures-py"
-version = "1.0.0"
+version = "1.0.1"
 description = "Dash app to generate textures maps from MRI"
 readme = "README.md"
 keywords = [ "ANTsPy", "Dash", "MRI", "texture maps" ]
