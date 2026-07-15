@@ -117,7 +117,7 @@ env.types.deps = [ "mypy", "pip" ]
 # ── python-semantic-release ──────────────────────────────────────────────
 [tool.semantic_release]
 tag_format = "v{version}"
-major_on_zero = false
+major_on_zero = true
 allow_zero_version = true
 version_variables = [
   "src/noelTexturesPy/__init__.py:__version__",
