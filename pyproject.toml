@@ -52,7 +52,12 @@ packages.find.exclude = [ ".github*", ".pixi*", "build*", "docker*", "docs*", "i
 include-package-data = false
 
 [tool.uv]
-sources.anstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps" }
+sources.antstorch = { git = "https://github.com/ravnoor/ANTsTorch.git", branch = "textures-deps" }
+environments = [
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "sys_platform == 'linux' and platform_machine == 'aarch64'",
+  "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
 
 [tool.ruff]
 format.quote-style = "single"
