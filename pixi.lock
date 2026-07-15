@@ -1,8 +1,22 @@
 version: 7
 platforms:
 - name: linux-64
+  virtual-packages:
+  - __unix=0=0
+  - __linux=4.18
+  - __glibc=2.28
+  - __archspec=0=x86_64
 - name: linux-aarch64
+  virtual-packages:
+  - __unix=0=0
+  - __linux=4.18
+  - __glibc=2.28
+  - __archspec=0=aarch64
 - name: osx-arm64
+  virtual-packages:
+  - __unix=0=0
+  - __osx=13.0
+  - __archspec=0=m1
 environments:
   build-ants:
     channels:
@@ -245,7 +259,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-64/antspyx-0.6.3-py314h92002da_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/05/6b/32f747947df2da6994e999492ab306a903659555dddc0fbdeb9d71f75e52/nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl
@@ -498,7 +512,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-aarch64/antspyx-0.6.3-py314h2634e83_0.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/04/f9/067b84365c7e83bda15bba2b06c6ca250ce27b20630b1128c435fb7a09aa/ml_dtypes-0.5.4-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
@@ -666,7 +680,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-hed4e4f5_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
       - conda: https://repo.prefix.dev/noel-forge/osx-arm64/antspyx-0.6.3-py314hd92b5b1_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/0b/a1/c4d4c0530313c50dd1ba07fff480cfd0c5f18c5ec49742f4a52a6edfd95f/jaxlib-0.10.1-cp314-cp314-macosx_11_0_arm64.whl
@@ -910,7 +924,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-64/antspyx-0.6.3-py314h92002da_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/05/6b/32f747947df2da6994e999492ab306a903659555dddc0fbdeb9d71f75e52/nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl
@@ -1194,7 +1208,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-aarch64/antspyx-0.6.3-py314h2634e83_0.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/04/f9/067b84365c7e83bda15bba2b06c6ca250ce27b20630b1128c435fb7a09aa/ml_dtypes-0.5.4-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
@@ -1393,7 +1407,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-hed4e4f5_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
       - conda: https://repo.prefix.dev/noel-forge/osx-arm64/antspyx-0.6.3-py314hd92b5b1_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/07/5c/f12a9978526c7068c873ccf9788161fc6af338c6a025f1354a46134a6e46/boto3-1.43.29-py3-none-any.whl
@@ -1661,7 +1675,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-64/antspyx-0.6.3-py314h92002da_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/05/6b/32f747947df2da6994e999492ab306a903659555dddc0fbdeb9d71f75e52/nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl
@@ -1906,7 +1920,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/werkzeug-3.1.8-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/zipp-4.1.0-pyhcf101f3_0.conda
       - conda: https://repo.prefix.dev/noel-forge/linux-aarch64/antspyx-0.6.3-py314h2634e83_0.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/04/f9/067b84365c7e83bda15bba2b06c6ca250ce27b20630b1128c435fb7a09aa/ml_dtypes-0.5.4-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl
@@ -2066,7 +2080,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zlib-ng-2.3.3-hed4e4f5_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/zstd-1.5.7-hbf9d68e_6.conda
       - conda: https://repo.prefix.dev/noel-forge/osx-arm64/antspyx-0.6.3-py314hd92b5b1_3.conda
-      - pypi: .
+      - pypi: ./
       - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
       - pypi: git+https://github.com/ravnoor/ANTsTorch.git?branch=textures-deps#06a8b43f19f3bfaca6e1f2311672aadd0e45d0f4
       - pypi: https://files.pythonhosted.org/packages/0b/a1/c4d4c0530313c50dd1ba07fff480cfd0c5f18c5ec49742f4a52a6edfd95f/jaxlib-0.10.1-cp314-cp314-macosx_11_0_arm64.whl
@@ -8292,7 +8306,7 @@ packages:
   run_exports: {}
   size: 6626751
   timestamp: 1780860280370
-- pypi: .
+- pypi: ./
   name: noel-textures-py
   requires_dist:
   - dash>=3.3,<5
@@ -8303,7 +8317,7 @@ packages:
   - pandas>=2.2.3,<4
   - pillow>=12,<13
   - antspyx>=0.6.3,<0.7 ; extra == 'ants'
-  - antstorch ; extra == 'ants'
+  - antstorch @ git+https://github.com/ravnoor/ANTsTorch.git@textures-deps ; extra == 'ants'
   requires_python: '>=3.12'
 - pypi: git+https://github.com/ANTsx/ANTsNormalizingFlows.git?rev=main#1e945c4683bed2d5916f6ea60e66f577679e065a
   name: antsnormflows
